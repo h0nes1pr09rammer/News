@@ -36,5 +36,8 @@
     <style name="DialogStyle" parent="AlertDialog.AppCompat.Light">
 
     </style>
+    <style name="Splash" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 
 </resources>

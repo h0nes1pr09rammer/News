@@ -21,13 +21,15 @@
         <activity android:name=".Activity.WebViewActivity"
             android:theme="@style/AppTheme1"></activity>
         <activity android:name=".Activity.PersonInfoActivity"></activity>
-        <activity android:name=".Activity.LaunchActivity">
+        <activity android:name=".Activity.SplashActivity"
+            android:theme="@style/Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
         </activity>
+
+        <activity android:name=".Activity.LaunchActivity"></activity>
         <activity android:name=".Activity.ChagePageActivity"></activity>
         <activity android:name=".Activity.SetupPageActivity"
             android:theme="@style/AppTheme1"></activity>
