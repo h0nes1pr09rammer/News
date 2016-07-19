@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/find"
+        android:icon="@mipmap/sousuo"
+        android:title="搜索"
+        android:orderInCategory="80"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/message"
+        android:icon="@mipmap/lingdang"
+        android:title="消息"
+        android:orderInCategory="90"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/share"
+        android:icon="@mipmap/fenxiang"
+        android:title="分享"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/shuffle"
+        android:icon="@mipmap/shuffle"
+        android:title="随机"
+        android:orderInCategory="110"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/about"
+        android:title="关于"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/logout"
+        android:title="登出"
+        app:showAsAction="never"/>
+</menu>
