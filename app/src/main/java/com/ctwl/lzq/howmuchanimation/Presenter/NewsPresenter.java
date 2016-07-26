@@ -4,7 +4,7 @@ import android.widget.TextView;
 
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
 import com.ctwl.lzq.howmuchanimation.Contract.NewsContract;
-import com.ctwl.lzq.howmuchanimation.Model.Data.News;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.Model.NewsRepository;
 
 import java.util.List;

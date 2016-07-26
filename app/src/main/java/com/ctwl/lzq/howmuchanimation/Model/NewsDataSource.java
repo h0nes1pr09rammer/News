@@ -1,8 +1,8 @@
 package com.ctwl.lzq.howmuchanimation.Model;
 
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
-import com.ctwl.lzq.howmuchanimation.Model.Data.News;
-import com.ctwl.lzq.howmuchanimation.Model.Data.NewsType;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
 
 import java.util.List;
 

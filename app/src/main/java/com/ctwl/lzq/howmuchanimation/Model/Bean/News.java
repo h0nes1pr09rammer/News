@@ -1,4 +1,4 @@
-package com.ctwl.lzq.howmuchanimation.Model.Data;
+package com.ctwl.lzq.howmuchanimation.Model.Bean;
 
 import java.util.List;
 

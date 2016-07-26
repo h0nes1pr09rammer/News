@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ctwl.lzq.howmuchanimation.Activity.WebViewActivity;
-import com.ctwl.lzq.howmuchanimation.Model.Data.News;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.R;
 import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;

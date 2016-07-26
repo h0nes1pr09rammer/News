@@ -1,4 +1,4 @@
-package com.ctwl.lzq.howmuchanimation.Model.Data;
+package com.ctwl.lzq.howmuchanimation.Model.Bean;
 
 /**
  * Created by B41-80 on 2016/7/11.

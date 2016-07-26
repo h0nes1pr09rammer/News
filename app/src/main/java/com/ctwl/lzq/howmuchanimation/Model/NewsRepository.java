@@ -10,8 +10,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.ctwl.lzq.howmuchanimation.BaseApi;
 import com.ctwl.lzq.howmuchanimation.BaseApplication;
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
-import com.ctwl.lzq.howmuchanimation.Model.Data.News;
-import com.ctwl.lzq.howmuchanimation.Model.Data.NewsType;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
 import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
 import com.orhanobut.logger.Logger;
 

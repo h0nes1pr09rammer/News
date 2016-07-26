@@ -2,7 +2,7 @@ package com.ctwl.lzq.howmuchanimation.Presenter;
 
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
 import com.ctwl.lzq.howmuchanimation.Contract.MainContract;
-import com.ctwl.lzq.howmuchanimation.Model.Data.NewsType;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
 import com.ctwl.lzq.howmuchanimation.Model.NewsRepository;
 import com.ctwl.lzq.howmuchanimation.main.MainActivity;
 

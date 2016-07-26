@@ -1,11 +1,16 @@
 package com.ctwl.lzq.howmuchanimation.Activity;
 
+import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +21,14 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.ctwl.lzq.howmuchanimation.R;
+import com.ctwl.lzq.howmuchanimation.Utils.LeanCloudUtils;
+import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
+import com.ctwl.lzq.howmuchanimation.View.CarePagerFragment;
+import com.ctwl.lzq.howmuchanimation.View.CollectionPagerFragment;
+import com.ctwl.lzq.howmuchanimation.View.DiscoverPagerFragment;
+import com.ctwl.lzq.howmuchanimation.View.DraftPagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.HomePagerFragment;
+import com.ctwl.lzq.howmuchanimation.View.ReleasePagerFragment;
 import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
@@ -26,21 +38,32 @@ import butterknife.ButterKnife;
  * Created by B41-80 on 2016/7/5.
  */
 public class JokeActivity extends AppCompatActivity{
+
     private final int JOKE_PAGE_ONE = 1;
     private final int JOKE_PAGE_TWO = 2;
     private final int JOKE_PAGE_THREE = 3;
     private final int JOKE_PAGE_FORE = 4;
     private final int JOKE_PAGE_FIVE = 5;
     private final int JOKE_PAGE_ZERO = 0;
+
     @BindView(R.id.joke_toolbar)
     Toolbar toolbar;
     @BindView(R.id.id_joke_drawer_layout)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.id_joke_nv_menu)
     NavigationView mNavigationView;
-    ImageView mImageView;
-    ActionBarDrawerToggle mActionBarDrawerToggle;
-    int pagerNumber;
+
+    private ImageView mImageView;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private int pagerNumber;
+    private FragmentManager mFragmentManager;
+
+    HomePagerFragment mHomePagerFragment;
+    DiscoverPagerFragment mDiscoverPagerFragment;
+    CollectionPagerFragment mCollectionPagerFragment;
+    DraftPagerFragment mDraftPagerFragment;
+    ReleasePagerFragment mReleasePagerFragment;
+    CarePagerFragment mCarePagerFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +74,15 @@ public class JokeActivity extends AppCompatActivity{
         initToolbar();
         initNavigationView();
         initActionBarDrawerToggle();
+        initFragment();
+    }
+
+    private void initFragment() {
+        if (mHomePagerFragment==null){
+            mHomePagerFragment = new HomePagerFragment();
+        }
+        mFragmentManager = getSupportFragmentManager();
+        mFragmentManager.beginTransaction().add(R.id.fragment_content,mHomePagerFragment).show(mHomePagerFragment).commit();
     }
 
     @Override
@@ -61,19 +93,20 @@ public class JokeActivity extends AppCompatActivity{
     private void initView() {
         mImageView = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.head_img);
         mImageView.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(JokeActivity.this,PersonInfoActivity.class));
                 startActivity(new Intent(JokeActivity.this,PersonInfoActivity.class), ActivityOptions.makeSceneTransitionAnimation(JokeActivity.this,mImageView,"mybtn").toBundle());
                 mDrawerLayout.closeDrawers();
             }
         });
-        HomePagerFragment mHomePagerFragment = new HomePagerFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_content,mHomePagerFragment).show(mHomePagerFragment).commit();
     }
+
+    /**
+     * 初始化ActionBarDrawerToggle
+     */
     private void initActionBarDrawerToggle() {
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this,
-                mDrawerLayout, toolbar, R.string.open, R.string.close);
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open, R.string.close);
         mActionBarDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
     }
@@ -81,37 +114,38 @@ public class JokeActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
     }
 
+    /**
+     * 初始化NavigationView
+     */
     private void initNavigationView() {
         mNavigationView.inflateMenu(R.menu.navigation_menu_login);
         mNavigationView.setItemIconTintList(null);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                switch (item.getTitle().toString()){
-                    case "首页":
-                        showHomePage(item);
-                        break;
-                    case "发现":
-                        showDiscoverPage(item);
-                        break;
-                    case "关注":
-                        showCarePage(item);
-                        break;
-                    case "收藏":
-                        showCollectionPage(item);
-                        break;
-                    case "草稿":
-                        showDraftPage(item);
-                        break;
-                    case "发布":
-                        showReleasePage(item);
-                        break;
-                    case "切换主题":
-                        showChagePage(item);
-                        break;
-                    case "设置":
-                        showSetupPage(item);
-                        break;
+                if (item.getTitle().toString().equals("首页")){
+                    showHomePage(item);
+                }
+                if (item.getTitle().toString().equals("发现")){
+                    showDiscoverPage(item);
+                }
+                if (item.getTitle().toString().equals("关注")){
+                    showCarePage(item);
+                }
+                if (item.getTitle().toString().equals("收藏")){
+                    showCollectionPage(item);
+                }
+                if (item.getTitle().toString().equals("草稿")){
+                    showDraftPage(item);
+                }
+                if (item.getTitle().toString().equals("发布")){
+                    showReleasePage(item);
+                }
+                if (item.getTitle().toString().equals("切换主题")){
+                    showChagePage();
+                }
+                if (item.getTitle().toString().equals("设置")){
+                    showSetupPage();
                 }
                 return false;
             }
@@ -121,9 +155,8 @@ public class JokeActivity extends AppCompatActivity{
     /**
      * 设置Toolbar样式
      * @param item
-     * @param visible
      */
-    private void setToolbar(MenuItem item,int visible,int pageNumber) {
+    private void setToolbar(MenuItem item,int pageNumber) {
         item.setChecked(true);
         toolbar.setTitle(item.getTitle());
         this.pagerNumber = pageNumber;
@@ -131,10 +164,18 @@ public class JokeActivity extends AppCompatActivity{
         mDrawerLayout.closeDrawers();
     }
 
-    private void showSetupPage(MenuItem item) {
+    /**
+     * 设置
+     */
+    private void showSetupPage() {
+        startActivity(new Intent(JokeActivity.this,SetupPageActivity.class));
     }
 
-    private void showChagePage(MenuItem item) {
+    /**
+     * 切换主题
+     */
+    private void showChagePage() {
+        startActivity(new Intent(JokeActivity.this,ChagePageActivity.class));
     }
 
     /**
@@ -142,27 +183,86 @@ public class JokeActivity extends AppCompatActivity{
      * @param item
      */
     private void showReleasePage(MenuItem item) {
-        setToolbar(item, View.GONE,JOKE_PAGE_FIVE);
+        setToolbar(item,JOKE_PAGE_FIVE);
+        if (mReleasePagerFragment == null){
+            mReleasePagerFragment = new ReleasePagerFragment();
+        }
+        showFragment(mReleasePagerFragment);
     }
 
+    /**
+     * 显示草稿页面
+     * @param item
+     */
     private void showDraftPage(MenuItem item) {
-        setToolbar(item,View.GONE,JOKE_PAGE_FORE);
+        setToolbar(item,JOKE_PAGE_FORE);
+        if (mDraftPagerFragment == null){
+            mDraftPagerFragment = new DraftPagerFragment();
+        }
+        showFragment(mDraftPagerFragment);
     }
 
+    /**
+     * 显示收藏页面
+     * @param item
+     */
     private void showCollectionPage(MenuItem item) {
-        setToolbar(item,View.GONE,JOKE_PAGE_THREE);
+        setToolbar(item,JOKE_PAGE_THREE);
+        if (mCollectionPagerFragment == null){
+            mCollectionPagerFragment = new CollectionPagerFragment();
+        }
+        showFragment(mCollectionPagerFragment);
     }
 
+    /**
+     * 显示关注页面
+     * @param item
+     */
     private void showCarePage(MenuItem item) {
-        setToolbar(item,View.GONE,JOKE_PAGE_TWO);
+        setToolbar(item,JOKE_PAGE_TWO);
+        if (mCarePagerFragment == null){
+            mCarePagerFragment = new CarePagerFragment();
+        }
+        showFragment(mCarePagerFragment);
     }
 
+    /**
+     * 显示发现页面
+     * @param item
+     */
     private void showDiscoverPage(MenuItem item) {
-        setToolbar(item,View.GONE,JOKE_PAGE_ONE);
+        setToolbar(item,JOKE_PAGE_ONE);
+        if (mDiscoverPagerFragment == null){
+            mDiscoverPagerFragment = new DiscoverPagerFragment();
+        }
+        showFragment(mDiscoverPagerFragment);
     }
 
+    /**
+     * 显示首页
+     * @param item
+     */
     private void showHomePage(MenuItem item) {
-        setToolbar(item,View.GONE,JOKE_PAGE_ZERO);
+        setToolbar(item,JOKE_PAGE_ZERO);
+        if (mHomePagerFragment==null){
+            mHomePagerFragment = new HomePagerFragment();
+        }
+        showFragment(mHomePagerFragment);
+    }
+
+    /**
+     * 显示选中Fragment
+     * @param fragment
+     */
+    public void showFragment(Fragment fragment){
+        FragmentTransaction mShowFragmentTransaction = mFragmentManager.beginTransaction();
+        if (!mFragmentManager.getFragments().contains(fragment)){
+            mShowFragmentTransaction.add(R.id.fragment_content,fragment);
+        }
+        for (Fragment currentFragment:mFragmentManager.getFragments()){
+            mShowFragmentTransaction.hide(currentFragment);
+        }
+        mShowFragmentTransaction.show(fragment).commit();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -173,25 +273,23 @@ public class JokeActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Logger.i(item.getTitle().toString(),"");
-        switch (item.getItemId()){
-            case R.id.find:
-                Snackbar.make(getCurrentFocus(),"搜索",Snackbar.LENGTH_LONG).show();
-                break;
-            case R.id.message:
-                Snackbar.make(getCurrentFocus(),"消息",Snackbar.LENGTH_LONG).show();
-                break;
-            case R.id.about:
-                Snackbar.make(getCurrentFocus(),"关于",Snackbar.LENGTH_LONG).show();
-                break;
-            case R.id.logout:
-                Snackbar.make(getCurrentFocus(),"登出",Snackbar.LENGTH_LONG).show();
-                break;
-            case R.id.shuffle:
-                Snackbar.make(getCurrentFocus(),"随机",Snackbar.LENGTH_LONG).show();
-                break;
-            case R.id.share:
-                Snackbar.make(getCurrentFocus(),"分享",Snackbar.LENGTH_LONG).show();
-                break;
+        if (item.getItemId() == R.id.find){
+
+        }
+        if (item.getItemId() == R.id.message){
+
+        }
+        if (item.getItemId() == R.id.about){
+
+        }
+        if (item.getItemId() == R.id.logout){
+            LeanCloudUtils.logOut();
+        }
+        if (item.getItemId() == R.id.shuffle){
+
+        }
+        if (item.getItemId() == R.id.share){
+
         }
         return true;
     }

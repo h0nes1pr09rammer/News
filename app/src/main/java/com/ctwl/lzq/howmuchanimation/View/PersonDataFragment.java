@@ -10,14 +10,12 @@ import android.view.ViewGroup;
 import com.ctwl.lzq.howmuchanimation.R;
 
 /**
- * Created by B41-80 on 2016/7/15.
+ * Created by B41-80 on 2016/7/26.
  */
-public class CollectionPagerFragment extends Fragment{
-    private View mView;
+public class PersonDataFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_collection_pager,container,false);
-        return mView;
+        return inflater.inflate(R.layout.fragment_person_data,container,false);
     }
 }

@@ -9,9 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -22,6 +20,7 @@ import com.ctwl.lzq.howmuchanimation.View.LaunchComicFragment;
 import com.ctwl.lzq.howmuchanimation.View.LaunchConstellationFragment;
 import com.ctwl.lzq.howmuchanimation.View.LaunchDialogueFragment;
 import com.ctwl.lzq.howmuchanimation.View.LaunchFateFragment;
+import com.ctwl.lzq.howmuchanimation.ViewPageTransformer.DepthPagetransformer;
 import com.ctwl.lzq.howmuchanimation.main.MainActivity;
 
 /**
@@ -56,6 +55,7 @@ public class LaunchActivity extends AppCompatActivity implements ViewPagerIndica
         viewPagerIndicate.addTabItem();
         viewPagerIndicate.setViewPager(viewpager,contentTextView);
         viewpager.setCurrentItem(1);
+        viewpager.setPageTransformer(true, new DepthPagetransformer());
         viewpager.setAdapter(new LaunchViewPagerAdaper(getSupportFragmentManager()));
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,21 +78,7 @@ public class LaunchActivity extends AppCompatActivity implements ViewPagerIndica
 
     @Override
     public void onSelected(int position) {
-        Log.i("LaunchActivity",""+position);
-        switch (position){
-            case 0:
-                launchFragment.wxImageView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.scale_launch));
-                launchFragment.qqImageView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.scale_launch));
-                launchFragment.wbImageView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.scale_launch));
-                break;
-            case 1:
-                launchComicFragment.appNameTextView.startAnimation(AnimationUtils.loadAnimation(this,R.anim.translate_bottom_to_center));
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-        }
+
     }
 
     @Override
@@ -113,7 +99,7 @@ public class LaunchActivity extends AppCompatActivity implements ViewPagerIndica
                         launchFragment = new LaunchFateFragment();
                     }
                     return launchFragment;
-                case 1:
+                case 3:
                     if (launchComicFragment==null){
                         launchComicFragment = new LaunchComicFragment();
                     }
@@ -123,7 +109,7 @@ public class LaunchActivity extends AppCompatActivity implements ViewPagerIndica
                         launchDialogueFragment = new LaunchDialogueFragment();
                     }
                     return launchDialogueFragment;
-                case 3:
+                case 1:
                     if (launchConstellationFragment == null){
                         launchConstellationFragment = new LaunchConstellationFragment();
                     }

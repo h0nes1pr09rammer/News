@@ -2,7 +2,7 @@ package com.ctwl.lzq.howmuchanimation.Contract;
 
 import com.ctwl.lzq.howmuchanimation.BasePresenter;
 import com.ctwl.lzq.howmuchanimation.BaseView;
-import com.ctwl.lzq.howmuchanimation.Model.Data.NewsType;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
 
 /**
  * Created by B41-80 on 2016/6/30.

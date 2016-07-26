@@ -9,6 +9,7 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.RequestMobileCodeCallback;
 import com.avos.avoscloud.SignUpCallback;
+import com.ctwl.lzq.howmuchanimation.BaseApi;
 import com.ctwl.lzq.howmuchanimation.Callback.LoginCallback;
 
 /**
@@ -17,7 +18,7 @@ import com.ctwl.lzq.howmuchanimation.Callback.LoginCallback;
 public class LeanCloudUtils {
     public static void init(Context context){
         // 初始化参数依次为 this, AppId, AppKey
-        AVOSCloud.initialize(context,"e2wTkjuqyoqj7GGTyNS4bc0a-gzGzoHsz","r0IdxlRcmlxRUKFK6N23Rw24");
+        AVOSCloud.initialize(context, BaseApi.APPLICAION_ID,BaseApi.CLIENT_ID);
     }
     public static void login(String phoneNumber, String password, final LoginCallback loginCallback){
         AVUser.logInInBackground(phoneNumber, password, new LogInCallback<AVUser>() {
@@ -103,7 +104,6 @@ public class LeanCloudUtils {
         });
     }
     public static boolean isLogin(){
-        AVUser.getCurrentUser().logOut();
         if (AVUser.getCurrentUser()==null){
             Log.i("LeanCloudUtils","no login");
             return true;
@@ -111,5 +111,8 @@ public class LeanCloudUtils {
             Log.i("LeanCloudUtils","login");
             return false;
         }
+    }
+    public static void logOut(){
+        AVUser.getCurrentUser().logOut();
     }
 }

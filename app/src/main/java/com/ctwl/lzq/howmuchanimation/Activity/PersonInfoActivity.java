@@ -1,22 +1,27 @@
 package com.ctwl.lzq.howmuchanimation.Activity;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.ctwl.lzq.howmuchanimation.Diy.DividerItemDecoration;
 import com.ctwl.lzq.howmuchanimation.R;
+import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
+import com.ctwl.lzq.howmuchanimation.View.PersonDataFragment;
+import com.ctwl.lzq.howmuchanimation.View.PersonLogFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,22 +29,26 @@ import butterknife.ButterKnife;
 /**
  * Created by B41-80 on 2016/7/14.
  */
-public class PersonInfoActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener{
+public class PersonInfoActivity extends AppCompatActivity{
+
     @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.id_recyclerview)
-    RecyclerView mRecyclerView;
     @BindView(R.id.appbar)
     AppBarLayout mAppBarLayout;
+    @BindView(R.id.person_info_tablayout)
+    TabLayout mTabLayout;
+    @BindView(R.id.person_info_viewpager)
+    ViewPager mViewPager;
+
+    private PersonDataFragment mPersonDataFragment;
+    private PersonLogFragment mPersonLogFragment;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person_info);
         ButterKnife.bind(this);
-        //Window.setSharedElementEnterTransition(new AutoTransition();//设置共享元素的进入动画
-        //Window.setSharedElementExitTransition();//设置共享元素的退出动画
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.mipmap.back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -48,48 +57,56 @@ public class PersonInfoActivity extends AppCompatActivity implements AppBarLayou
                 onBackPressed();
             }
         });
+        mToolbar.setOverflowIcon(getDrawable(R.mipmap.home_page_white));
+        mToolbar.setNavigationIcon(R.mipmap.back);
         mAppBarLayout.addOnOffsetChangedListener(this);
         mCollapsingToolbarLayout.setTitle("个人信息");
         //通过CollapsingToolbarLayout修改字体颜色
         //mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);//设置还没收缩时状态下字体颜色
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(new MyAdapter());
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL_LIST));
+        //mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //mRecyclerView.setAdapter(new MyAdapter());
+        mViewPager.setAdapter(new PersonerViewPagerAdapter(getSupportFragmentManager()));
+        mTabLayout.setTabTextColors(getResources().getColor(R.color.whiteTrans80), getResources().getColor(R.color.orange));
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        if (verticalOffset==0){
-            mToolbar.setOverflowIcon(getDrawable(R.mipmap.home_page_yellow));
-            mToolbar.setNavigationIcon(R.mipmap.back_yellow);
-        }else{
-            mToolbar.setOverflowIcon(getDrawable(R.mipmap.home_page_white));
-            mToolbar.setNavigationIcon(R.mipmap.back);
-        }
-    }
 
-    public class MyAdapter extends RecyclerView.Adapter<MyViewHolder>{
+    public class PersonerViewPagerAdapter extends FragmentPagerAdapter {
 
-        @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(getLayoutInflater().inflate(R.layout.ry_item_news,parent,false));
+        public PersonerViewPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @Override
-        public void onBindViewHolder(MyViewHolder holder, int position) {
-            ((MyViewHolder)holder).textView.setText("1111");
+        public Fragment getItem(int position) {
+            if (position==0){
+                if (mPersonDataFragment == null){
+                    mPersonDataFragment = new PersonDataFragment();
+                }
+                return mPersonDataFragment;
+            }else {
+                if (mPersonLogFragment == null){
+                    mPersonLogFragment = new PersonLogFragment();
+                }
+                return mPersonLogFragment;
+            }
         }
 
         @Override
-        public int getItemCount() {
-            return 100;
+        public int getCount() {
+            return 2;
         }
-    }
-    public class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView textView;
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.news_tv);
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            String mPageTitle;
+            if (position==0){
+                mPageTitle = "个人信息";
+            }else{
+                mPageTitle = "个人动态";
+            }
+            return mPageTitle;
         }
     }
 

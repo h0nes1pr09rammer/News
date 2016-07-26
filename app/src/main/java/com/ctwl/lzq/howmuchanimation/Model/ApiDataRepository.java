@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.ctwl.lzq.howmuchanimation.BaseApi;
 import com.ctwl.lzq.howmuchanimation.Callback.HttpCallBack;
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
-import com.ctwl.lzq.howmuchanimation.Model.Data.Constell;
-import com.ctwl.lzq.howmuchanimation.Model.Data.Dialogue;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.Constell;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.Dialogue;
 import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;
 import com.orhanobut.logger.Logger;
 

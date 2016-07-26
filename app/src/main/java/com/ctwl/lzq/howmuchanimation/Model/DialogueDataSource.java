@@ -1,7 +1,7 @@
 package com.ctwl.lzq.howmuchanimation.Model;
 
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
-import com.ctwl.lzq.howmuchanimation.Model.Data.Dialogue;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.Dialogue;
 
 /**
  * Created by B41-80 on 2016/7/5.

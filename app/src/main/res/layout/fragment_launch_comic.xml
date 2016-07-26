@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="3"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:tag="comic"
+    android:background="#00000000">
     <TextView
         android:id="@+id/app_name"
         android:layout_width="match_parent"
