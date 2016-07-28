@@ -9,8 +9,10 @@ import com.ctwl.lzq.howmuchanimation.View.LaunchDialogueFragment;
  * Created by B41-80 on 2016/7/5.
  */
 public class DialoguePresenter implements LaunchContract.DialogPresenter{
+
     private LaunchDialogueFragment launchDialogueFragment;
     private ApiDataRepository apiDataRepository;
+
     public DialoguePresenter(LaunchDialogueFragment launchDialogueFragment) {
         this.launchDialogueFragment = launchDialogueFragment;
         apiDataRepository = new ApiDataRepository();

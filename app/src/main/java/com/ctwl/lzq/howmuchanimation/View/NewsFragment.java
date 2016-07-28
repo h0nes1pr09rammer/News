@@ -19,7 +19,11 @@ import com.ctwl.lzq.howmuchanimation.Adapter.NewsRecyclerAdapter;
 import com.ctwl.lzq.howmuchanimation.BaseFragment;
 import com.ctwl.lzq.howmuchanimation.Contract.NewsContract;
 import com.ctwl.lzq.howmuchanimation.Diy.DividerItemDecoration;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by B41-80 on 2016/6/28.
@@ -38,6 +42,8 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     ImageView loadingImageView;
     Animation mAnimation;
     boolean isPrepared;
+    List<News> mNewsList;
+    NewsRecyclerAdapter mNewsRecyclerAdapter;
 
     public  NewsFragment(int position,String channelId){
         itemContent = position;
@@ -49,6 +55,10 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if (frameLayout==null){
             frameLayout = new FrameLayout(getActivity());
         }
+        if (mNewsList==null){
+            mNewsList = new ArrayList<News>();
+        }
+        mNewsRecyclerAdapter = new NewsRecyclerAdapter(getActivity(),mNewsList);
         view = inflater.inflate(R.layout.fragment_news,container,false);
         frameLayout.addView(view);
         if (!isHasLoad){
@@ -64,8 +74,9 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //设置Item增加、移除动画
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.HORIZONTAL_LIST));
+        //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.HORIZONTAL_LIST));
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL_LIST));
+        recyclerView.setAdapter(mNewsRecyclerAdapter);
         swipeRefreshLayout.setOnRefreshListener(this);
         isPrepared = true;
         lazyLoad();
@@ -84,7 +95,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        newsPresenter.loadingNews();
+        newsPresenter.loadNews(channelId);
     }
 
     @Override
@@ -105,15 +116,24 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void loadingSuccess() {
         //设置adapter
-        recyclerView.setAdapter(new NewsRecyclerAdapter(getActivity(),newsPresenter.getNews()));
+        //for (News mNews:newsPresenter.getNews()){
+          //  if (!mNewsList.contains(mNews)){
+            //    mNewsList.add(0,mNews);
+           // }
+        //}
+        mNewsList.clear();
+        mNewsList.addAll(newsPresenter.getNews());
+        mNewsRecyclerAdapter.notifyDataSetChanged();
         isHasLoad = true;
         loadingImageView.clearAnimation();
         frameLayout.removeView(lodingView);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void showErrorMsg() {
         Toast.makeText(getActivity(),"加载失败",Toast.LENGTH_SHORT).show();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -125,8 +145,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     protected void lazyLoad() {
        if (!isPrepared||isHasLoad||!isVisible){
            return;
-       }
-        newsPresenter.loadNews(channelId);
+       }newsPresenter.loadNews(channelId);
         isHasLoad = true;
     }
 }

@@ -59,7 +59,6 @@ public class PersonInfoActivity extends AppCompatActivity{
         });
         mToolbar.setOverflowIcon(getDrawable(R.mipmap.home_page_white));
         mToolbar.setNavigationIcon(R.mipmap.back);
-        mAppBarLayout.addOnOffsetChangedListener(this);
         mCollapsingToolbarLayout.setTitle("个人信息");
         //通过CollapsingToolbarLayout修改字体颜色
         //mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);//设置还没收缩时状态下字体颜色

@@ -2,6 +2,7 @@ package com.ctwl.lzq.howmuchanimation.Utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.LruCache;
 import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
@@ -9,12 +10,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ctwl.lzq.howmuchanimation.Callback.HttpCallBack;
 import com.ctwl.lzq.howmuchanimation.R;
+import com.ctwl.lzq.howmuchanimation.libcore.io.DiskLruCache;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,5 +110,35 @@ public class VolleyUtils {
             }
         });
         mQueue.add(imageRequest);
+    }
+    public void displayImageView(String url, final ImageView imageView){
+        ImageLoader mImageLoader = new ImageLoader(mQueue, new BitmapCache());
+        ImageLoader.ImageListener mImageListener =ImageLoader.getImageListener(imageView,R.mipmap.down_load_ing,R.mipmap.down_load_faile);
+        mImageLoader.get(url,mImageListener);
+    }
+    public class BitmapCache implements ImageLoader.ImageCache {
+
+        private LruCache<String, Bitmap> mCache;
+
+        public BitmapCache() {
+            int maxSize = 10 * 1024 * 1024;
+            mCache = new LruCache<String, Bitmap>(maxSize) {
+                @Override
+                protected int sizeOf(String key, Bitmap bitmap) {
+                    return bitmap.getRowBytes() * bitmap.getHeight();
+                }
+            };
+        }
+
+        @Override
+        public Bitmap getBitmap(String url) {
+            return mCache.get(url);
+        }
+
+        @Override
+        public void putBitmap(String url, Bitmap bitmap) {
+            mCache.put(url, bitmap);
+        }
+
     }
 }

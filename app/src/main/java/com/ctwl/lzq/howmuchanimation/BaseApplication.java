@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.ctwl.lzq.howmuchanimation.Utils.CommonUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.LeanCloudUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;
 
@@ -16,6 +17,7 @@ public class BaseApplication extends Application{
     public void onCreate() {
         super.onCreate();
         LeanCloudUtils.init(getApplicationContext());
+        CommonUtils.init(getApplicationContext());
         mQueue = Volley.newRequestQueue(getApplicationContext());
         VolleyUtils.getInstance().initVolley(this);
     }

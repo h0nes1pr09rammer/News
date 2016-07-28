@@ -71,17 +71,17 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case 1:
                 ((NewsImageViewHolder)holder).titleTextView.setText(newsList.get(position).getTitle());
                 ((NewsImageViewHolder)holder).sourceTextView.setText(newsList.get(position).getSource());
-                VolleyUtils.getInstance().disPlayImageView(newsList.get(position).getImageurls().get(0).getUrl(),((NewsImageViewHolder) holder).titleImageView);
+                VolleyUtils.getInstance().displayImageView(newsList.get(position).getImageurls().get(0).getUrl(),((NewsImageViewHolder) holder).titleImageView);
                 break;
             default:
                 ((NewsThreeImageViewHolder)holder).titleTextView.setText(newsList.get(position).getTitle());
                 if (holder.getItemViewType()==2){
-                    VolleyUtils.getInstance().disPlayImageView(newsList.get(position).getImageurls().get(0).getUrl(),((NewsThreeImageViewHolder) holder).oneImageView);
-                    VolleyUtils.getInstance().disPlayImageView(newsList.get(position).getImageurls().get(1).getUrl(),((NewsThreeImageViewHolder) holder).twoImageView);
+                    VolleyUtils.getInstance().displayImageView(newsList.get(position).getImageurls().get(0).getUrl(),((NewsThreeImageViewHolder) holder).oneImageView);
+                    VolleyUtils.getInstance().displayImageView(newsList.get(position).getImageurls().get(1).getUrl(),((NewsThreeImageViewHolder) holder).twoImageView);
                 }else{
-                    VolleyUtils.getInstance().disPlayImageView(newsList.get(position).getImageurls().get(0).getUrl(),((NewsThreeImageViewHolder) holder).oneImageView);
-                    VolleyUtils.getInstance().disPlayImageView(newsList.get(position).getImageurls().get(1).getUrl(),((NewsThreeImageViewHolder) holder).twoImageView);
-                    VolleyUtils.getInstance().disPlayImageView(newsList.get(position).getImageurls().get(2).getUrl(),((NewsThreeImageViewHolder) holder).threeImageView);
+                    VolleyUtils.getInstance().displayImageView(newsList.get(position).getImageurls().get(0).getUrl(),((NewsThreeImageViewHolder) holder).oneImageView);
+                    VolleyUtils.getInstance().displayImageView(newsList.get(position).getImageurls().get(1).getUrl(),((NewsThreeImageViewHolder) holder).twoImageView);
+                    VolleyUtils.getInstance().displayImageView(newsList.get(position).getImageurls().get(2).getUrl(),((NewsThreeImageViewHolder) holder).threeImageView);
                 }
                 break;
         }

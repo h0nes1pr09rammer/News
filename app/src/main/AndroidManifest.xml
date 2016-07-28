@@ -28,6 +28,8 @@
             </intent-filter>
 
         </activity>
+        <activity android:name=".Activity.ChagePageActivity"></activity>
+        <activity android:name=".Activity.SetupPageActivity"></activity>
 
     </application>
 
