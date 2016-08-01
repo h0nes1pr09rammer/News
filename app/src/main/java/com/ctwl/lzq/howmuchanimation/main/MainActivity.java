@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             newsFragments = new ArrayList<NewsFragment>();
             for (int i = 0;i<newsPresenter.newsTypeNumber();i++){
                 NewsFragment newsFragment = new NewsFragment(i,newsPresenter.getNewsType(i).getChannelId());
-                NewsPresenter newsPresenter = new NewsPresenter(newsFragment);
+                NewsPresenter newsPresenter = new NewsPresenter(newsFragment,MainActivity.this);
                 newsFragments.add(i,newsFragment);
             }
         }

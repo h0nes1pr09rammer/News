@@ -1,5 +1,6 @@
 package com.ctwl.lzq.howmuchanimation.Presenter;
 
+import android.content.Context;
 import android.widget.TextView;
 
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
@@ -16,10 +17,10 @@ public class NewsPresenter implements NewsContract.Presenter{
     private NewsContract.View view;
     private NewsRepository newsRepository;
 
-    public NewsPresenter(NewsContract.View newsView){
+    public NewsPresenter(NewsContract.View newsView, Context context){
         view = newsView;
         view.setPresenter(this);
-        newsRepository = new NewsRepository();
+        newsRepository = new NewsRepository(context);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class NewsPresenter implements NewsContract.Presenter{
 
     @Override
     public void loadNews(String channelId) {
-        newsRepository.getNews(channelId, new JsonCallBack() {
+        newsRepository.loadingNews(channelId, new JsonCallBack() {
             @Override
             public void onSuccess() {
                 view.loadingSuccess();

@@ -23,6 +23,8 @@ import com.ctwl.lzq.howmuchanimation.View.LaunchFateFragment;
 import com.ctwl.lzq.howmuchanimation.ViewPageTransformer.DepthPagetransformer;
 import com.ctwl.lzq.howmuchanimation.main.MainActivity;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by B41-80 on 2016/6/27.
  */

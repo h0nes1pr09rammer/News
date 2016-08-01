@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ctwl.lzq.howmuchanimation.Adapter.NewsRecyclerAdapter;
@@ -21,6 +22,8 @@ import com.ctwl.lzq.howmuchanimation.Contract.NewsContract;
 import com.ctwl.lzq.howmuchanimation.Diy.DividerItemDecoration;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.R;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,12 +118,6 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void loadingSuccess() {
-        //设置adapter
-        //for (News mNews:newsPresenter.getNews()){
-          //  if (!mNewsList.contains(mNews)){
-            //    mNewsList.add(0,mNews);
-           // }
-        //}
         mNewsList.clear();
         mNewsList.addAll(newsPresenter.getNews());
         mNewsRecyclerAdapter.notifyDataSetChanged();

@@ -16,9 +16,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ctwl.lzq.howmuchanimation.Callback.HttpCallBack;
 import com.ctwl.lzq.howmuchanimation.R;
-import com.ctwl.lzq.howmuchanimation.libcore.io.DiskLruCache;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,22 +93,12 @@ public class VolleyUtils {
         });
         mQueue.add(imageRequest);
     }
-    public void disPlayImageView(String url, final ImageView imageView){
-        ImageRequest imageRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                if (imageView!=null){
-                    imageView.setImageBitmap(response);
-                }
-            }
-        }, 0, 0, ImageView.ScaleType.CENTER_CROP, Bitmap.Config.RGB_565, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.iu));
-            }
-        });
-        mQueue.add(imageRequest);
-    }
+
+    /**
+     * ImageLoader加载图片
+     * @param url
+     * @param imageView
+     */
     public void displayImageView(String url, final ImageView imageView){
         ImageLoader mImageLoader = new ImageLoader(mQueue, new BitmapCache());
         ImageLoader.ImageListener mImageListener =ImageLoader.getImageListener(imageView,R.mipmap.down_load_ing,R.mipmap.down_load_faile);

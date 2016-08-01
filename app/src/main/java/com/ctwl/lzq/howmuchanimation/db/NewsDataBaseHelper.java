@@ -18,7 +18,8 @@ public class NewsDataBaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         LogUtils.i("NewsDataBaseHelper","-----db onCreate---");
-        db.execSQL("create table user(id int, name varchar(20))");
+        db.execSQL("CREATE TABLE news(content varchar(225),channelId varchar(20))");
+        db.execSQL("CREATE TABLE news_type(channelId varchar(20) PRIMARY KEY,name varchar(20))");
     }
 
     @Override

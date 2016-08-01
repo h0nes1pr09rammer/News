@@ -30,7 +30,7 @@ public class CommonUtils {
     public static boolean isNetWorkAvailable(){
         ConnectivityManager connectivityManager = (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo == null || !networkInfo.isAvailable())
+        if(networkInfo != null || !networkInfo.isAvailable())
         {
             //当前有可用网络
             return true;

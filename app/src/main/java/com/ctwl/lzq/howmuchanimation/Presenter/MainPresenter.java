@@ -15,7 +15,7 @@ public class MainPresenter implements MainContract.Presenter{
     MainActivity mainActivity;
 
     public MainPresenter(MainActivity mainActivity) {
-        newsRepository = new NewsRepository();
+        newsRepository = new NewsRepository(mainActivity);
         this.mainActivity = mainActivity;
     }
 
@@ -31,7 +31,7 @@ public class MainPresenter implements MainContract.Presenter{
 
     @Override
     public void LoadingData() {
-        newsRepository.interpretingData(new JsonCallBack() {
+        newsRepository.loadingNewsTypeData(new JsonCallBack() {
             @Override
             public void onSuccess() {
                 mainActivity.loadingDataSuccess();

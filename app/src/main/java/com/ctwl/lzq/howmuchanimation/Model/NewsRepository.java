@@ -1,64 +1,53 @@
 package com.ctwl.lzq.howmuchanimation.Model;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.ctwl.lzq.howmuchanimation.BaseApi;
-import com.ctwl.lzq.howmuchanimation.BaseApplication;
+import com.ctwl.lzq.howmuchanimation.Callback.HttpCallBack;
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
+import com.ctwl.lzq.howmuchanimation.Utils.CommonUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
-import com.orhanobut.logger.Logger;
+import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;
+import com.ctwl.lzq.howmuchanimation.db.NewsDataBaseHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by B41-80 on 2016/6/28.
  */
 public class NewsRepository implements NewsDataSource{
+
     List<NewsType> newsTypeList;
     List<News> newsList;
+    NewsDataBaseHelper mNewsDataBaseHelper;
+    SQLiteDatabase mSqLiteDatabase;
+    HashMap<String, String> map;
 
-    public NewsRepository() {
+    public NewsRepository(Context context) {
+        mNewsDataBaseHelper = new NewsDataBaseHelper(context,"News",null,1);
+        mSqLiteDatabase = mNewsDataBaseHelper.getWritableDatabase();
+        newsTypeList = new ArrayList<NewsType>();
+        newsList = new ArrayList<News>();
+        map = new HashMap<String,String>();
+        map.put("apikey", BaseApi.MY_APPKEY);
     }
 
     @Override
-    public void interpretingData(final JsonCallBack jsonCallBack) {
-        newsTypeList = new ArrayList<NewsType>();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, BaseApi.NEWS_API, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Logger.json(response);
-                toJson(response);
-                jsonCallBack.onSuccess();
-            }
-            private void toJson(String t) {
-                JSONObject jsonObject = JSON.parseObject(t);
-                jsonObject = JSON.parseObject(jsonObject.getString("showapi_res_body"));
-                List<NewsType> newsTypes = JSON.parseArray(jsonObject.getString("channelList"),NewsType.class);
-                newsTypeList.addAll(newsTypes);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> map = new HashMap<String,String>();
-                map.put("apikey", BaseApi.MY_APPKEY);
-                return map;
-            }
-        };
-        BaseApplication.mQueue.add(stringRequest);
+    public void loadingNewsTypeData(JsonCallBack jsonCallBack) {
+        if (CommonUtils.isWifi()){
+            loadingNewsTypeDataFromNet(jsonCallBack);
+        }else{
+            loadingNewsTypeDataFromBd(jsonCallBack);
+        }
     }
 
     @Override
@@ -72,42 +61,151 @@ public class NewsRepository implements NewsDataSource{
     }
 
     @Override
-    public void getNews(String channelId, final JsonCallBack jsonCallBack) {
-        newsList = new ArrayList<News>();
-        String httpUrl = BaseApi.NEWS_CONENT_API + "?" + "channelId=" + channelId;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, httpUrl, new Response.Listener<String>() {
+    public void loadingNews(final String channelId, final JsonCallBack jsonCallBack) {
+        if (CommonUtils.isWifi()){
+            LogUtils.i("loadingNews","from net");
+            getNewsFromNet(channelId,jsonCallBack);
+        }else{
+            LogUtils.i("loadingNews","from db");
+            getNewsFromBd(channelId,jsonCallBack);
+        }
+    }
+
+    /**
+     * 获取新闻类型（网络）
+     * @param jsonCallBack
+     */
+    public void loadingNewsTypeDataFromNet(final JsonCallBack jsonCallBack) {
+        VolleyUtils.getInstance().postString(BaseApi.NEWS_API, map, null, new HttpCallBack() {
             @Override
-            public void onResponse(String response) {
-                Logger.json(response);
-                toJson(response);
+            public void onSuccess(Object o) {
+                toJson(o.toString());
                 jsonCallBack.onSuccess();
+            }
+
+            @Override
+            public void onFaile() {
+                jsonCallBack.onFaile(404,"刷新失败");
+            }
+            private void toJson(String t) {
+                JSONObject jsonObject = JSON.parseObject(t);
+                jsonObject = JSON.parseObject(jsonObject.getString("showapi_res_body"));
+                List<NewsType> newsTypes = JSON.parseArray(jsonObject.getString("channelList"),NewsType.class);
+                newsTypeList.addAll(newsTypes);
+                clearBd();
+                for (NewsType newsType:newsTypes){
+                    insertNewsTypeToBd(newsType);
+                }
+            }
+        });
+    }
+
+    /**
+     * 将数据存到本地
+     * @param newsType
+     */
+    private void insertNewsTypeToBd(NewsType newsType){
+        ContentValues mContentValues = new ContentValues();
+        mContentValues.put("channelId",newsType.getChannelId());
+        mContentValues.put("name",newsType.getName());
+        mSqLiteDatabase.insert("news_type",null,mContentValues);
+    }
+
+    /**
+     * 获取新闻类型（本地）
+     * @param jsonCallBack
+     */
+    public void loadingNewsTypeDataFromBd(JsonCallBack jsonCallBack) {
+        // Cursor mCursor = mSqLiteDatabase.
+        Cursor mCursor = mSqLiteDatabase.query("news_type",null,null,null,null,null,null);
+        for (mCursor.moveToFirst();!(mCursor.isAfterLast());mCursor.moveToNext()) {
+            NewsType newsType = new NewsType();
+            newsType.setChannelId(mCursor.getString(0));
+            newsType.setName(mCursor.getString(1));
+            newsTypeList.add(newsType);
+        }
+        if (newsTypeList.size()>0){
+            jsonCallBack.onSuccess();
+        }else{
+            jsonCallBack.onFaile(404,"本地暂无数据");
+        }
+    }
+
+    /**
+     * 获取新闻内容（网络）
+     * @param channelId
+     * @param jsonCallBack
+     */
+    public void getNewsFromNet(final String channelId, final JsonCallBack jsonCallBack) {
+        String httpUrl = BaseApi.NEWS_CONENT_API + "?" + "channelId=" + channelId;
+        VolleyUtils.getInstance().postString(httpUrl, map, null, new HttpCallBack() {
+            @Override
+            public void onSuccess(Object o) {
+                toJson(o.toString());
+                jsonCallBack.onSuccess();
+            }
+
+            @Override
+            public void onFaile() {
+                jsonCallBack.onFaile(404,"加载失败");
             }
             private void toJson(String t) {
                 JSONObject jsonObject = JSON.parseObject(t);
                 jsonObject = JSON.parseObject(jsonObject.getString("showapi_res_body"));
                 jsonObject = JSON.parseObject(jsonObject.getString("pagebean"));
                 List<News> newsTypes = JSON.parseArray(jsonObject.getString("contentlist"),News.class);
-                for (int i = 0;i<newsTypes.size();i++){
-                    LogUtils.i("Repository",""+newsTypes.get(i).getImagesNumber());
-                }
                 newsList.addAll(newsTypes);
+                clearNews();
+                insertNewsToBd(t,channelId);
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> map = new HashMap<>();
-                map.put("apikey",BaseApi.MY_APPKEY);
-                return map;
-            }
-        };
-        BaseApplication.mQueue.add(stringRequest);
+        });
     }
 
+    private void insertNewsToBd(String t,String channelId){
+        ContentValues mContentValues = new ContentValues();
+        mContentValues.put("content",t);
+        mContentValues.put("channelId",channelId);
+        mSqLiteDatabase.insert("news",null,mContentValues);
+    }
+
+    /**
+     * 获取新闻内容（本地）
+     * @param channelId
+     * @param jsonCallBack
+     */
+    public void getNewsFromBd(String channelId, JsonCallBack jsonCallBack) {
+        Cursor mCursor = mSqLiteDatabase.query("news", new String[] { "channelId","content" },"channelId=?", new String[]{channelId}, null,null, null, null);
+        for (mCursor.moveToFirst();!(mCursor.isAfterLast());mCursor.moveToNext()) {
+            JSONObject jsonObject = JSON.parseObject(mCursor.getString(1));
+            jsonObject = JSON.parseObject(jsonObject.getString("showapi_res_body"));
+            jsonObject = JSON.parseObject(jsonObject.getString("pagebean"));
+            List<News> newsTypes = JSON.parseArray(jsonObject.getString("contentlist"),News.class);
+            newsList.addAll(newsTypes);
+        }
+        if (newsList.size()>0){
+            jsonCallBack.onSuccess();
+        }else{
+            jsonCallBack.onFaile(404,"本地暂无数据");
+        }
+    }
+
+    @Override
+    public void savaNewsType() {
+
+    }
+
+    @Override
+    public void saveNews() {
+
+    }
+
+    @Override
+    public void clearBd() {
+        mSqLiteDatabase.execSQL("DELETE FROM news_type");
+    }
+    private void clearNews(){
+        mSqLiteDatabase.execSQL("DELETE FROM news");
+    }
     @Override
     public List<News> getNews() {
         return newsList;
