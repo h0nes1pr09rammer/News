@@ -8,10 +8,9 @@ import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.Constell;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.Dialogue;
 import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;
-import com.orhanobut.logger.Logger;
-
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 /**
  * Created by B41-80 on 2016/7/5.
@@ -76,8 +75,6 @@ public class ApiDataRepository implements DialogueDataSource {
             @Override
             public void onSuccess(Object o) {
                 Constell constell = JSON.parseObject(o.toString(),Constell.class);
-                Logger.json(o.toString());
-                Logger.i(constell.getSummary(),"");
                 jsonCallBack.onSuccess();
             }
 

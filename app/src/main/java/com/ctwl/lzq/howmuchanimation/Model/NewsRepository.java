@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -13,7 +14,6 @@ import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
 import com.ctwl.lzq.howmuchanimation.Utils.CommonUtils;
-import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;
 import com.ctwl.lzq.howmuchanimation.db.NewsDataBaseHelper;
 
@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class NewsRepository implements NewsDataSource{
 
+    public static final String ALL_NEWS_SIGN = "123";
     List<NewsType> newsTypeList;
     List<News> newsList;
     NewsDataBaseHelper mNewsDataBaseHelper;
@@ -61,13 +62,11 @@ public class NewsRepository implements NewsDataSource{
     }
 
     @Override
-    public void loadingNews(final String channelId, final JsonCallBack jsonCallBack) {
+    public void loadingNews(final String channelId,String pageNumber, final JsonCallBack jsonCallBack) {
         if (CommonUtils.isWifi()){
-            LogUtils.i("loadingNews","from net");
-            getNewsFromNet(channelId,jsonCallBack);
+            getNewsFromNet(channelId,pageNumber,jsonCallBack);
         }else{
-            LogUtils.i("loadingNews","from db");
-            getNewsFromBd(channelId,jsonCallBack);
+            getNewsFromBd(channelId,pageNumber,jsonCallBack);
         }
     }
 
@@ -116,7 +115,6 @@ public class NewsRepository implements NewsDataSource{
      * @param jsonCallBack
      */
     public void loadingNewsTypeDataFromBd(JsonCallBack jsonCallBack) {
-        // Cursor mCursor = mSqLiteDatabase.
         Cursor mCursor = mSqLiteDatabase.query("news_type",null,null,null,null,null,null);
         for (mCursor.moveToFirst();!(mCursor.isAfterLast());mCursor.moveToNext()) {
             NewsType newsType = new NewsType();
@@ -136,11 +134,18 @@ public class NewsRepository implements NewsDataSource{
      * @param channelId
      * @param jsonCallBack
      */
-    public void getNewsFromNet(final String channelId, final JsonCallBack jsonCallBack) {
-        String httpUrl = BaseApi.NEWS_CONENT_API + "?" + "channelId=" + channelId;
+    public void getNewsFromNet(final String channelId,String pageNumber, final JsonCallBack jsonCallBack) {
+        String httpUrl;
+        if (channelId.equals(ALL_NEWS_SIGN)){
+            httpUrl = BaseApi.NEWS_CONENT_API +"?"+"page="+pageNumber;
+        }else{
+            httpUrl = BaseApi.NEWS_CONENT_API +"?" + "channelId=" + channelId+"&page="+pageNumber;
+        }
+        Log.i("getNewsFromNet",httpUrl);
         VolleyUtils.getInstance().postString(httpUrl, map, null, new HttpCallBack() {
             @Override
             public void onSuccess(Object o) {
+                Log.v("getNewsFromNet",o.toString());
                 toJson(o.toString());
                 jsonCallBack.onSuccess();
             }
@@ -154,6 +159,7 @@ public class NewsRepository implements NewsDataSource{
                 jsonObject = JSON.parseObject(jsonObject.getString("showapi_res_body"));
                 jsonObject = JSON.parseObject(jsonObject.getString("pagebean"));
                 List<News> newsTypes = JSON.parseArray(jsonObject.getString("contentlist"),News.class);
+                newsList.clear();
                 newsList.addAll(newsTypes);
                 clearNews();
                 insertNewsToBd(t,channelId);
@@ -173,7 +179,7 @@ public class NewsRepository implements NewsDataSource{
      * @param channelId
      * @param jsonCallBack
      */
-    public void getNewsFromBd(String channelId, JsonCallBack jsonCallBack) {
+    public void getNewsFromBd(String channelId,String pageNumber, JsonCallBack jsonCallBack) {
         Cursor mCursor = mSqLiteDatabase.query("news", new String[] { "channelId","content" },"channelId=?", new String[]{channelId}, null,null, null, null);
         for (mCursor.moveToFirst();!(mCursor.isAfterLast());mCursor.moveToNext()) {
             JSONObject jsonObject = JSON.parseObject(mCursor.getString(1));
@@ -183,8 +189,10 @@ public class NewsRepository implements NewsDataSource{
             newsList.addAll(newsTypes);
         }
         if (newsList.size()>0){
+            Log.v("getNewsFromBd","success");
             jsonCallBack.onSuccess();
         }else{
+            Log.v("getNewsFromBd","faile");
             jsonCallBack.onFaile(404,"本地暂无数据");
         }
     }

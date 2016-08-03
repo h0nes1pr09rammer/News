@@ -9,14 +9,12 @@ import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
  */
 public interface MainContract {
     interface View extends BaseView<Presenter> {
-        void setRefereshing(boolean refereshing);
-        void waitLoading();
         void loadingDataSuccess();
         void showErrorMsg(String error);
     }
     interface Presenter extends BasePresenter {
         int newsTypeNumber();
         NewsType getNewsType(int position);
-        void LoadingData();
+        void loadingData();
     }
 }

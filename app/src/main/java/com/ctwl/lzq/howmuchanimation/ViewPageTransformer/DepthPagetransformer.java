@@ -18,7 +18,6 @@ public class DepthPagetransformer implements ViewPager.PageTransformer
 
     public void transformPage(View view, float position)
     {
-        LogUtils.i("DepthPagetransformer",view.getTag().toString());
         int pageWidth = view.getWidth();
         int pageHeight = view.getHeight();
 

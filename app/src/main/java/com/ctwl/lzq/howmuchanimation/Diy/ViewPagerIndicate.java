@@ -1,17 +1,13 @@
 package com.ctwl.lzq.howmuchanimation.Diy;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -20,7 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ctwl.lzq.howmuchanimation.R;
-import com.orhanobut.logger.Logger;
+
+import java.util.logging.Logger;
 
 /**
  * Created by B41-80 on 2016/7/4.
@@ -106,7 +103,6 @@ public class ViewPagerIndicate extends FrameLayout implements ViewPager.OnPageCh
     public void onPageSelected(int position) {
         Log.i("ViewPagerIndicate",""+position);
         if (onSelectedPageListener != null){
-            Logger.i(""+position,"");
             onSelectedPageListener.onSelected(position);
         }
         final String content;

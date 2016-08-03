@@ -15,13 +15,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Slide;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.ctwl.lzq.howmuchanimation.Contract.MainContract;
+import com.ctwl.lzq.howmuchanimation.Dialog.LoginDialog;
 import com.ctwl.lzq.howmuchanimation.Presenter.MainPresenter;
 import com.ctwl.lzq.howmuchanimation.Presenter.NewsPresenter;
 import com.ctwl.lzq.howmuchanimation.R;
+import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
 import com.ctwl.lzq.howmuchanimation.View.NewsFragment;
 
 import java.util.ArrayList;
@@ -29,10 +32,11 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements MainContract.View{
-    ViewPager viewpager;
-    AppBarLayout appBarLayout;
-    CoordinatorLayout coordinatorLayout;
-    TabLayout tabLayout;
+
+    private ViewPager viewpager;
+    private AppBarLayout appBarLayout;
+    private CoordinatorLayout coordinatorLayout;
+    private TabLayout tabLayout;
     private MainPagerAdapter mMainPagerAdapter;
     private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private ActionBarDrawerToggle mActionBarDrawerToggle;
     private MainPresenter newsPresenter;
     private List<NewsFragment> newsFragments;
-
+    private LoginDialog mLoginDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         initToolbar();
         initNavigationView();
         initActionBarDrawerToggle();
-        newsPresenter.LoadingData();
+        newsPresenter.loadingData();
     }
 
     @Override
@@ -90,8 +94,21 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                switch (item.getTitle().toString()){
+                String itemTitle = item.getTitle().toString();
+                if (itemTitle.equals("登录或注册")){
+                    if (mLoginDialog == null){
+                        mLoginDialog = new LoginDialog();
+                    }
+                    mLoginDialog.show(getSupportFragmentManager(),null);
+                }else if (itemTitle.equals("QQ登录")){
+                }else if (itemTitle.equals("微博登录")){
+                }else if (itemTitle.equals("微信登录")){
+                }else if (itemTitle.equals("切换主题")){
+
+                }else if (itemTitle.equals("设置")){
+
                 }
+                mDrawerLayout.closeDrawers();
                 return false;
             }
         });
@@ -109,15 +126,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         newsPresenter = new MainPresenter(this);
     }
 
-    @Override
-    public void setRefereshing(boolean refereshing) {
-
-    }
-
-    @Override
-    public void waitLoading() {
-
-    }
 
     @Override
     public void loadingDataSuccess() {
@@ -127,9 +135,18 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void showErrorMsg(String error) {
-        Snackbar.make(getCurrentFocus(),error,Snackbar.LENGTH_INDEFINITE).show();
+//        Snackbar.make(getCurrentFocus(),error,Snackbar.LENGTH_INDEFINITE).show();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void setPresenter(MainContract.Presenter presenter) {

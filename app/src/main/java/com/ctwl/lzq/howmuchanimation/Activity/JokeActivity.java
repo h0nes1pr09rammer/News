@@ -3,12 +3,10 @@ package com.ctwl.lzq.howmuchanimation.Activity;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,14 +21,14 @@ import android.widget.ImageView;
 
 import com.ctwl.lzq.howmuchanimation.R;
 import com.ctwl.lzq.howmuchanimation.Utils.LeanCloudUtils;
-import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
 import com.ctwl.lzq.howmuchanimation.View.CarePagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.CollectionPagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.DiscoverPagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.DraftPagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.HomePagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.ReleasePagerFragment;
-import com.orhanobut.logger.Logger;
+
+import java.util.logging.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,7 +46,7 @@ public class JokeActivity extends AppCompatActivity {
     private final int JOKE_PAGE_ZERO = 0;
 
     @BindView(R.id.joke_toolbar)
-    Toolbar toolbar;
+    Toolbar mToolbar;
     @BindView(R.id.id_joke_drawer_layout)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.id_joke_nv_menu)
@@ -109,13 +107,13 @@ public class JokeActivity extends AppCompatActivity {
      * 初始化ActionBarDrawerToggle
      */
     private void initActionBarDrawerToggle() {
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.open, R.string.close);
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close);
         mActionBarDrawerToggle.syncState();
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
     }
 
     private void initToolbar() {
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
     }
 
     /**
@@ -163,7 +161,7 @@ public class JokeActivity extends AppCompatActivity {
      */
     private void setToolbar(MenuItem item, int pageNumber) {
         item.setChecked(true);
-        toolbar.setTitle(item.getTitle());
+        mToolbar.setTitle(item.getTitle());
         this.pagerNumber = pageNumber;
         invalidateOptionsMenu();
         mDrawerLayout.closeDrawers();
@@ -285,7 +283,6 @@ public class JokeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Logger.i(item.getTitle().toString(), "");
         if (item.getItemId() == R.id.find) {
 
         }

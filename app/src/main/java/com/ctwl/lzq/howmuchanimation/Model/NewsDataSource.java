@@ -15,7 +15,7 @@ public interface NewsDataSource {
     void loadingNewsTypeData(JsonCallBack jsonCallBack);
     int newsTypeNumber();
     List<NewsType> getNewsTpyeList();
-    void loadingNews(final String channelId, final JsonCallBack jsonCallBack);
+    void loadingNews(final String channelId,String pageNumber, final JsonCallBack jsonCallBack);
     //void getNewsFromNet(String channelId,JsonCallBack jsonCallBack);
     //void getNewsFromBd(String channelId,JsonCallBack jsonCallBack);
     void savaNewsType();

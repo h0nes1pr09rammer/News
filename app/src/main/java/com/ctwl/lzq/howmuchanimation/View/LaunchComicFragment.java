@@ -1,20 +1,14 @@
 package com.ctwl.lzq.howmuchanimation.View;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.ctwl.lzq.howmuchanimation.BaseFragment;
 import com.ctwl.lzq.howmuchanimation.R;
-import com.orhanobut.logger.Logger;
 
 /**
  * Created by B41-80 on 2016/6/27.

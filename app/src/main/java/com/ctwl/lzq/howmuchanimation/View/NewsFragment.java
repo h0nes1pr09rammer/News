@@ -2,10 +2,12 @@ package com.ctwl.lzq.howmuchanimation.View;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,31 +24,40 @@ import com.ctwl.lzq.howmuchanimation.Contract.NewsContract;
 import com.ctwl.lzq.howmuchanimation.Diy.DividerItemDecoration;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.R;
-
-import org.w3c.dom.Text;
+import com.ctwl.lzq.howmuchanimation.listener.OnScrollListener;
+import com.ctwl.lzq.howmuchanimation.listener.RecyclerViewScrollListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by B41-80 on 2016/6/28.
  */
-public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,NewsContract.View{
+public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,NewsContract.View,OnScrollListener{
 
-    View view;
-    View lodingView;
-    RecyclerView recyclerView;
-    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.id_recyclerview)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.id_swiperefreshlayout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
     NewsContract.Presenter newsPresenter;
-    int itemContent;
-    String channelId;
-    boolean isHasLoad;
-    FrameLayout frameLayout;
-    ImageView loadingImageView;
-    Animation mAnimation;
-    boolean isPrepared;
-    List<News> mNewsList;
     NewsRecyclerAdapter mNewsRecyclerAdapter;
+    RecyclerViewScrollListener mRecyclerViewScrollListener;
+
+    private int itemContent;
+    private String channelId;
+    private List<News> mNewsList;
+    private View mFootView;
+    private View mContentView;
+    private View mLodingView;
+    private TextView mFootLoadView;
+    private ImageView mLoadingImageView;
+    private FrameLayout mFrameLayout;
+    private Animation mAnimation;
+    private int pageNumber = 0;
 
     public  NewsFragment(int position,String channelId){
         itemContent = position;
@@ -55,40 +66,44 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (frameLayout==null){
-            frameLayout = new FrameLayout(getActivity());
+        mContentView = inflater.inflate(R.layout.fragment_news,container,false);
+        mFrameLayout = new FrameLayout(getActivity());
+        ButterKnife.bind(this,mContentView);
+        mNewsList = new ArrayList<News>();
+        mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate_view_reverse);
+        mFootView = inflater.inflate(R.layout.item_foot,container,false);
+        mFootLoadView = (TextView) mFootView.findViewById(R.id.from_tv);
+        mFrameLayout.addView(mContentView);
+        initRecyclerView();
+        addLoadView();
+        setPrepared(true);
+        onVisible();
+        return mFrameLayout;
+    }
+
+    private void addLoadView() {
+        if (!isHasLoad()){
+            mLodingView = View.inflate(getActivity(), R.layout.loding_news_fragment, null);
+            mLoadingImageView = (ImageView) mLodingView.findViewById(R.id.loading);
+            mLoadingImageView.startAnimation(mAnimation);
+            mFrameLayout.addView(mLodingView);
         }
-        if (mNewsList==null){
-            mNewsList = new ArrayList<News>();
-        }
+    }
+
+    private void initRecyclerView() {
         mNewsRecyclerAdapter = new NewsRecyclerAdapter(getActivity(),mNewsList);
-        view = inflater.inflate(R.layout.fragment_news,container,false);
-        frameLayout.addView(view);
-        if (!isHasLoad){
-            lodingView = View.inflate(getActivity(), R.layout.loding_news_fragment, null);
-            loadingImageView = (ImageView) lodingView.findViewById(R.id.loading);
-            mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate_view_reverse);
-            loadingImageView.startAnimation(mAnimation);
-            frameLayout.addView(lodingView);
-        }
-        recyclerView = (RecyclerView) view.findViewById(R.id.id_recyclerview);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.id_swiperefreshlayout);
-        //设置布局管理器
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //设置Item增加、移除动画
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.HORIZONTAL_LIST));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL_LIST));
-        recyclerView.setAdapter(mNewsRecyclerAdapter);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        isPrepared = true;
-        lazyLoad();
-        return frameLayout;
+        setLinearRecyclerView(mRecyclerView);
+        mRecyclerViewScrollListener = new RecyclerViewScrollListener(mNewsRecyclerAdapter);
+        mRecyclerViewScrollListener.setOnScrollListener(this);
+        //mRecyclerView滚动监听
+        mRecyclerView.addOnScrollListener(mRecyclerViewScrollListener);
+        mRecyclerView.setAdapter(mNewsRecyclerAdapter);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
@@ -98,7 +113,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        newsPresenter.loadNews(channelId);
+        newsPresenter.loadMore(channelId,"1");
     }
 
     @Override
@@ -107,30 +122,30 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     @Override
-    public void setRefereshing(boolean refereshing) {
-        swipeRefreshLayout.setRefreshing(refereshing);
-    }
-
-    @Override
-    public void waitLoading() {
-
+    public void loadingMoreSuccess() {
+        mFootLoadView.clearAnimation();
+        mNewsList.addAll(newsPresenter.getNews());
+        mNewsRecyclerAdapter.notifyDataSetChanged();
+        Log.v("NewsFragment","加载成功");
     }
 
     @Override
     public void loadingSuccess() {
         mNewsList.clear();
+        mLoadingImageView.clearAnimation();
         mNewsList.addAll(newsPresenter.getNews());
         mNewsRecyclerAdapter.notifyDataSetChanged();
-        isHasLoad = true;
-        loadingImageView.clearAnimation();
-        frameLayout.removeView(lodingView);
-        swipeRefreshLayout.setRefreshing(false);
+        setHasLoad(true);
+        mFrameLayout.removeView(mLodingView);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void showErrorMsg() {
-        Toast.makeText(getActivity(),"加载失败",Toast.LENGTH_SHORT).show();
-        swipeRefreshLayout.setRefreshing(false);
+    public void showErrorMsg(String msg) {
+        mLoadingImageView.clearAnimation();
+        mLoadingImageView.setImageDrawable(getResources().getDrawable(R.mipmap.down_load_faile));
+//        Snackbar.make(mFrameLayout,msg,Snackbar.LENGTH_INDEFINITE).show();
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -140,9 +155,18 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     protected void lazyLoad() {
-       if (!isPrepared||isHasLoad||!isVisible){
-           return;
-       }newsPresenter.loadNews(channelId);
-        isHasLoad = true;
+        newsPresenter.loadNews(channelId,addPageNumber());
+        setHasLoad(true);
+    }
+
+    @Override
+    public void scrollToBottom() {
+        mNewsRecyclerAdapter.setFootView(mFootView);
+        mFootLoadView.startAnimation(mAnimation);
+        newsPresenter.loadMore(channelId,addPageNumber());
+    }
+    private String addPageNumber(){
+        pageNumber++;
+        return String.valueOf(pageNumber);
     }
 }

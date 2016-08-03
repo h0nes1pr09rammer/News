@@ -1,7 +1,6 @@
 package com.ctwl.lzq.howmuchanimation.Presenter;
 
 import android.content.Context;
-import android.widget.TextView;
 
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
 import com.ctwl.lzq.howmuchanimation.Contract.NewsContract;
@@ -28,30 +27,8 @@ public class NewsPresenter implements NewsContract.Presenter{
     }
 
     @Override
-    public int newsItemNumber() {
-        return newsRepository.getNews().size();
-    }
-
-    @Override
-    public void setNewsContent(TextView textView,int itemContent) {
-        if (!newsRepository.getNews().get(itemContent).getDesc().isEmpty()){
-            textView.setText(newsRepository.getNews().get(itemContent).getDesc());
-        }else{
-            textView.setText("null");
-        }
-
-    }
-
-    @Override
-    public void loadingNews() {
-        view.setRefereshing(false);
-    }
-
-
-
-    @Override
-    public void loadNews(String channelId) {
-        newsRepository.loadingNews(channelId, new JsonCallBack() {
+    public void loadNews(String channelId,String pageNumber) {
+        newsRepository.loadingNews(channelId,pageNumber, new JsonCallBack() {
             @Override
             public void onSuccess() {
                 view.loadingSuccess();
@@ -59,7 +36,7 @@ public class NewsPresenter implements NewsContract.Presenter{
 
             @Override
             public void onFaile(int errorNo, String strMsg) {
-                view.showErrorMsg();
+                view.showErrorMsg(strMsg);
             }
         });
     }
@@ -67,6 +44,21 @@ public class NewsPresenter implements NewsContract.Presenter{
     @Override
     public List<News> getNews() {
         return newsRepository.getNews();
+    }
+
+    @Override
+    public void loadMore(String channelId,String pageNumber) {
+        newsRepository.getNewsFromNet(channelId,pageNumber, new JsonCallBack() {
+            @Override
+            public void onSuccess() {
+                view.loadingMoreSuccess();
+            }
+
+            @Override
+            public void onFaile(int errorNo, String strMsg) {
+                view.showErrorMsg(strMsg);
+            }
+        });
     }
 
 

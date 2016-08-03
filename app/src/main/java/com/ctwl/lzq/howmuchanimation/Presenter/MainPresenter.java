@@ -30,7 +30,7 @@ public class MainPresenter implements MainContract.Presenter{
     }
 
     @Override
-    public void LoadingData() {
+    public void loadingData() {
         newsRepository.loadingNewsTypeData(new JsonCallBack() {
             @Override
             public void onSuccess() {
