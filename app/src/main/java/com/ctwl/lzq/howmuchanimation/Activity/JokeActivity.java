@@ -74,16 +74,14 @@ public class JokeActivity extends AppCompatActivity {
         initNavigationView();
         initActionBarDrawerToggle();
         initFragment();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
     }
 
     private void initFragment() {
-        if (mHomePagerFragment == null) {
-            mHomePagerFragment = new HomePagerFragment();
+        if (mDiscoverPagerFragment == null) {
+            mDiscoverPagerFragment = new DiscoverPagerFragment();
         }
         mFragmentManager = getSupportFragmentManager();
-        mFragmentManager.beginTransaction().add(R.id.fragment_content, mHomePagerFragment).show(mHomePagerFragment).commit();
+        mFragmentManager.beginTransaction().add(R.id.fragment_content, mDiscoverPagerFragment).show(mDiscoverPagerFragment).commit();
     }
 
     @Override
@@ -126,21 +124,21 @@ public class JokeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 if (item.getTitle().toString().equals("首页")) {
-                    showHomePage(item);
-                }
-                if (item.getTitle().toString().equals("发现")) {
                     showDiscoverPage(item);
                 }
-                if (item.getTitle().toString().equals("关注")) {
+                if (item.getTitle().toString().equals("网友爆料")) {
+                    showHomePage(item);
+                }
+                if (item.getTitle().toString().equals("我的关注")) {
                     showCarePage(item);
                 }
-                if (item.getTitle().toString().equals("收藏")) {
+                if (item.getTitle().toString().equals("我的收藏")) {
                     showCollectionPage(item);
                 }
-                if (item.getTitle().toString().equals("草稿")) {
+                if (item.getTitle().toString().equals("发布动态")) {
                     showDraftPage(item);
                 }
-                if (item.getTitle().toString().equals("发布")) {
+                if (item.getTitle().toString().equals("反馈")) {
                     showReleasePage(item);
                 }
                 if (item.getTitle().toString().equals("切换主题")) {

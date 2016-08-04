@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
 
     private void initPresenter() {
-        newsPresenter = new MainPresenter(this);
+        newsPresenter = new MainPresenter(MainActivity.this,this);
     }
 
 

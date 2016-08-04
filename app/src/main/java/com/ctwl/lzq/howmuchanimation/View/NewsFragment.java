@@ -74,7 +74,6 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mFootView = inflater.inflate(R.layout.item_foot,container,false);
         mFootLoadView = (TextView) mFootView.findViewById(R.id.from_tv);
         mFrameLayout.addView(mContentView);
-        initRecyclerView();
         addLoadView();
         setPrepared(true);
         onVisible();
@@ -98,12 +97,14 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         //mRecyclerView滚动监听
         mRecyclerView.addOnScrollListener(mRecyclerViewScrollListener);
         mRecyclerView.setAdapter(mNewsRecyclerAdapter);
+        mNewsRecyclerAdapter.setFootView(mFootView);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+        initRecyclerView();
     }
 
     @Override
@@ -123,6 +124,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void loadingMoreSuccess() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mFootLoadView.clearAnimation();
         mNewsList.addAll(newsPresenter.getNews());
         mNewsRecyclerAdapter.notifyDataSetChanged();
@@ -161,7 +163,6 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void scrollToBottom() {
-        mNewsRecyclerAdapter.setFootView(mFootView);
         mFootLoadView.startAnimation(mAnimation);
         newsPresenter.loadMore(channelId,addPageNumber());
     }

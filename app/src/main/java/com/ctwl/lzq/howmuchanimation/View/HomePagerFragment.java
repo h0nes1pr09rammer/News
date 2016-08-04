@@ -111,5 +111,4 @@ public class HomePagerFragment extends BaseRecyclerViewFragment{
         mNewsRecyclerAdapter.setFootView(mFootView);
         mNewsPresenter.loadMore(NewsRepository.ALL_NEWS_SIGN,getPageNumber());
     }
-
 }

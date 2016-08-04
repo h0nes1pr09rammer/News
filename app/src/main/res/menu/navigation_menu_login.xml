@@ -8,23 +8,23 @@
         <item
             android:id="@+id/discaver_page"
             android:icon="@mipmap/faxian"
-            android:title="发现"/>
+            android:title="网友爆料"/>
         <item
             android:id="@+id/follow_page"
             android:icon="@mipmap/guanzhu"
-            android:title="关注"/>
+            android:title="我的关注"/>
         <item
             android:id="@+id/collection_page"
             android:icon="@mipmap/shoucang"
-            android:title="收藏"/>
-        <item
-            android:id="@+id/draft_page"
-            android:icon="@mipmap/caogao"
-            android:title="草稿"/>
+            android:title="我的收藏"/>
         <item
             android:id="@+id/release_page"
             android:icon="@mipmap/fabu"
-            android:title="发布"/>
+            android:title="发布动态"/>
+        <item
+            android:id="@+id/draft_page"
+            android:icon="@mipmap/caogao"
+            android:title="反馈"/>
     </group>
 
     <group>

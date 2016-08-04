@@ -1,5 +1,7 @@
 package com.ctwl.lzq.howmuchanimation.Presenter;
 
+import android.content.Context;
+
 import com.ctwl.lzq.howmuchanimation.Callback.JsonCallBack;
 import com.ctwl.lzq.howmuchanimation.Contract.MainContract;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.NewsType;
@@ -12,11 +14,13 @@ import com.ctwl.lzq.howmuchanimation.main.MainActivity;
 public class MainPresenter implements MainContract.Presenter{
 
     private NewsRepository newsRepository;
-    MainActivity mainActivity;
+    Context mainActivity;
+    MainContract.View mView;
 
-    public MainPresenter(MainActivity mainActivity) {
+    public MainPresenter(Context mainActivity,MainContract.View mView) {
         newsRepository = new NewsRepository(mainActivity);
         this.mainActivity = mainActivity;
+        this.mView = mView;
     }
 
     @Override
@@ -34,12 +38,12 @@ public class MainPresenter implements MainContract.Presenter{
         newsRepository.loadingNewsTypeData(new JsonCallBack() {
             @Override
             public void onSuccess() {
-                mainActivity.loadingDataSuccess();
+                mView.loadingDataSuccess();
             }
 
             @Override
             public void onFaile(int errorNo, String strMsg) {
-                mainActivity.showErrorMsg(strMsg);
+                mView.showErrorMsg(strMsg);
             }
         });
     }
