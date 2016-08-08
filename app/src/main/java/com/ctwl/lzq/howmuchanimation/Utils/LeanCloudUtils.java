@@ -3,14 +3,28 @@ package com.ctwl.lzq.howmuchanimation.Utils;
 import android.content.Context;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.RequestMobileCodeCallback;
+import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.SignUpCallback;
 import com.ctwl.lzq.howmuchanimation.BaseApi;
+import com.ctwl.lzq.howmuchanimation.Callback.LeancloudFindCallback;
+import com.ctwl.lzq.howmuchanimation.Callback.LeancloudSaveCallback;
 import com.ctwl.lzq.howmuchanimation.Callback.LoginCallback;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.ImageUrls;
+import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by B41-80 on 2016/7/1.
@@ -114,5 +128,56 @@ public class LeanCloudUtils {
     }
     public static void logOut(){
         AVUser.getCurrentUser().logOut();
+    }
+    public static void saveInBackground(String name, Map<String,Object> map,final LeancloudSaveCallback mLeancloudSaveCallback){
+        AVObject todo = new AVObject(name);
+        Iterator iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            todo.put(entry.getKey().toString(), entry.getValue().toString());
+        }
+        todo.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                if (e == null) {
+                    // 存储成功
+                    mLeancloudSaveCallback.onSaveSuccess();
+                } else {
+                    // 失败的话，请检查网络环境以及 SDK 配置是否正确
+                    mLeancloudSaveCallback.onSaveFaile(e.toString());
+                }
+            }
+        });
+    }
+    public static void findInBackground(String name,final LeancloudFindCallback mLeancloudFindCallback){
+        AVQuery<AVObject> query = new AVQuery<>(name);
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e==null&&list!=null){
+                    List<News> mNewsList = new ArrayList<News>();
+                    for (int i = 0;i<list.size();i++){
+                        mNewsList.add(toNews(list.get(i)));
+                    }
+                    mLeancloudFindCallback.onFindSuccess(mNewsList);
+                }else{
+                    mLeancloudFindCallback.onFindFaile(e.toString());
+                }
+            }
+        });
+    }
+    private static News toNews(AVObject avObject) {
+        News news = new News();
+        news.setChannelId(avObject.getString("channelId"));
+        news.setChannelName(avObject.getString("channelName"));
+        news.setDesc(avObject.getString("desc"));
+//        Log.v("toNews",JSON.parseObject(avObject.getString("imagesUrls")).toString());
+        news.setImageurls(JSON.parseArray(avObject.getString("imagesUrls"),ImageUrls.class));
+        news.setImagesNumber(Integer.valueOf(avObject.getString("imagesNumber")));
+        news.setLink(avObject.getString("link"));
+        news.setPubDate(avObject.getString("pubDate"));
+        news.setSource(avObject.getString("source"));
+        news.setTitle(avObject.getString("title"));
+        return news;
     }
 }

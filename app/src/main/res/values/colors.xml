@@ -10,4 +10,5 @@
     <color name="translation">#00000000</color>
     <color name="black">#000000</color>
     <color name="translation_black">#44000000</color>
+    <color name="mswhite">#88ffffff</color>
 </resources>

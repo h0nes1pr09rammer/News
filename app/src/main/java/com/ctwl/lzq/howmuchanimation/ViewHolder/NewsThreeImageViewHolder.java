@@ -15,11 +15,15 @@ public class NewsThreeImageViewHolder extends RecyclerView.ViewHolder{
     public ImageView twoImageView;
     public ImageView threeImageView;
     public TextView titleTextView;
+    public ImageView mCollectionImageView;
+    public ImageView mShareImageView;
     public NewsThreeImageViewHolder(View itemView) {
         super(itemView);
         oneImageView = (ImageView) itemView.findViewById(R.id.img_1);
         twoImageView = (ImageView) itemView.findViewById(R.id.ima_2);
         threeImageView = (ImageView) itemView.findViewById(R.id.img_3);
         titleTextView = (TextView) itemView.findViewById(R.id.news_title);
+        mCollectionImageView = (ImageView) itemView.findViewById(R.id.m_collection);
+        mShareImageView = (ImageView) itemView.findViewById(R.id.m_share);
     }
 }

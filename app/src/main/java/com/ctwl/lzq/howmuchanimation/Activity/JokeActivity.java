@@ -135,10 +135,10 @@ public class JokeActivity extends AppCompatActivity {
                 if (item.getTitle().toString().equals("我的收藏")) {
                     showCollectionPage(item);
                 }
-                if (item.getTitle().toString().equals("发布动态")) {
+                if (item.getTitle().toString().equals("反馈")) {
                     showDraftPage(item);
                 }
-                if (item.getTitle().toString().equals("反馈")) {
+                if (item.getTitle().toString().equals("发布动态")) {
                     showReleasePage(item);
                 }
                 if (item.getTitle().toString().equals("切换主题")) {

@@ -12,9 +12,10 @@ public class BaseApi {
     /**
      * leancloud APPLICAION_ID
      */
-    public static String APPLICAION_ID = "e2wTkjuqyoqj7GGTyNS4bc0a-gzGzoHsz";
+    public static String APPLICAION_ID = "eiqzXrlr5ijjnTzK9DOHTGiH-gzGzoHsz";
     /**
      * lencloud CLIENT_ID
      */
-    public static String CLIENT_ID = "r0IdxlRcmlxRUKFK6N23Rw24";
+    public static String CLIENT_ID = "z7jnFpHsJE11yeM2fUJrlJ72";
+    public static String COLLECTION_TABLE = "collection";
 }

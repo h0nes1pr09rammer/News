@@ -20,6 +20,7 @@ public interface NewsContract {
         void loadNews(String channelId,String pageNumber);
         List<News> getNews();
         void loadMore(String channelId,String pageNumber);
+        void upLoad(News news);
     }
 
 }

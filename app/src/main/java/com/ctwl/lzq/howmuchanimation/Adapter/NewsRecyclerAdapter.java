@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.ctwl.lzq.howmuchanimation.Activity.WebViewActivity;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
@@ -36,6 +37,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private View mFootView;
     private boolean hasHead;
     private boolean hasFoot;
+    private OnNewsItemClikListener onNewsItemClikListener;
 
 
     public NewsRecyclerAdapter(Context context, List<News> newsList) {
@@ -115,16 +117,11 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }else{
             mPosition = position;
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, WebViewActivity.class);
-                intent.putExtra("url",newsList.get(mPosition).getLink());
-                context.startActivity(intent);
-            }
-        });
         switch (holder.getItemViewType()){
             case NO_IMG_NEWS:
+                addOnItemClik(holder,mPosition);
+                addOnShareClik(((NewsViewHolder)holder).mShareImageView,newsList.get(mPosition));
+                addOnCollectionClik(((NewsViewHolder)holder).mCollectionImageView,newsList.get(mPosition));
                 ((NewsViewHolder)holder).textView.setText(newsList.get(mPosition).getTitle());
                 if (newsList.get(mPosition).getDesc().length()>57){
                     ((NewsViewHolder)holder).desTextView.setText(newsList.get(mPosition).getDesc().substring(0,57)+"...");
@@ -133,6 +130,9 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
                 break;
             case ONE_IMG_NEWS:
+                addOnItemClik(holder,mPosition);
+                addOnShareClik(((NewsImageViewHolder)holder).mShareImageView,newsList.get(mPosition));
+                addOnCollectionClik(((NewsImageViewHolder)holder).mCollectionImageView,newsList.get(mPosition));
                 ((NewsImageViewHolder)holder).titleTextView.setText(newsList.get(mPosition).getTitle());
                 ((NewsImageViewHolder)holder).sourceTextView.setText(newsList.get(mPosition).getSource());
                 VolleyUtils.getInstance().displayImageView(newsList.get(mPosition).getImageurls().get(0).getUrl(),((NewsImageViewHolder) holder).titleImageView);
@@ -142,6 +142,9 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case NewsRecyclerAdapter.HAS_FOOT_SIGN:
                 break;
             default:
+                addOnItemClik(holder,mPosition);
+                addOnShareClik(((NewsThreeImageViewHolder)holder).mShareImageView,newsList.get(mPosition));
+                addOnCollectionClik(((NewsThreeImageViewHolder)holder).mCollectionImageView,newsList.get(mPosition));
                 ((NewsThreeImageViewHolder)holder).titleTextView.setText(newsList.get(mPosition).getTitle());
                 if (holder.getItemViewType()==2){
                     VolleyUtils.getInstance().displayImageView(newsList.get(mPosition).getImageurls().get(0).getUrl(),((NewsThreeImageViewHolder) holder).oneImageView);
@@ -155,6 +158,37 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    private void addOnItemClik(RecyclerView.ViewHolder holder, final int mPosition) {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, WebViewActivity.class);
+                intent.putExtra("url",newsList.get(mPosition).getLink());
+                context.startActivity(intent);
+            }
+        });
+    }
+    private void addOnShareClik(ImageView imageView, final News news){
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onNewsItemClikListener!=null){
+                    onNewsItemClikListener.onClikShareButton(news);
+                }
+            }
+        });
+    }
+    private void addOnCollectionClik(ImageView imageView,final News news){
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onNewsItemClikListener!=null){
+                    onNewsItemClikListener.onClikCollectionButton(news);
+                }
+            }
+        });
+    }
+
     @Override
     public int getItemCount() {
         if (!hasHead&&!hasFoot){
@@ -164,5 +198,12 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }else{
             return newsList.size()+1;
         }
+    }
+    public void setOnNewsItemClikListener(OnNewsItemClikListener onNewsItemClikListener){
+        this.onNewsItemClikListener = onNewsItemClikListener;
+    }
+    public interface OnNewsItemClikListener{
+        void onClikShareButton(News news);
+        void onClikCollectionButton(News news);
     }
 }

@@ -6,8 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.ctwl.lzq.howmuchanimation.Diy.DividerItemDecoration;
-
 /**
  * Created by B41-80 on 2016/6/30.
  */
@@ -92,7 +90,7 @@ public abstract class BaseFragment extends Fragment{
         //设置移除动画
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //设置分割线
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL_LIST));
+//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL_LIST));
     }
 
     protected abstract void clearData();

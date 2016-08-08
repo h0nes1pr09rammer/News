@@ -5,7 +5,7 @@
     android:id="@+id/m_friend_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/CardView"
+    style="@style/CardViewStyle"
     card_view:cardBackgroundColor="@android:color/white"
     card_view:cardCornerRadius="10dp"
     card_view:cardElevation="24dp"
@@ -47,5 +47,30 @@
                 android:layout_weight="1"
                 android:scaleType="centerCrop"/>
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#ff0"
+            android:layout_marginTop="8dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/m_collection"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="8dp"
+                android:src="@mipmap/shoucang"
+                android:scaleType="centerCrop"
+                android:layout_alignParentRight="true"/>
+            <ImageView
+                android:id="@+id/m_share"
+                android:layout_toLeftOf="@id/m_collection"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="8dp"
+                android:src="@mipmap/share"
+                android:scaleType="centerCrop" />
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

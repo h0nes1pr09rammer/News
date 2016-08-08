@@ -2,10 +2,7 @@ package com.ctwl.lzq.howmuchanimation.View;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,12 +13,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ctwl.lzq.howmuchanimation.Adapter.NewsRecyclerAdapter;
 import com.ctwl.lzq.howmuchanimation.BaseFragment;
 import com.ctwl.lzq.howmuchanimation.Contract.NewsContract;
-import com.ctwl.lzq.howmuchanimation.Diy.DividerItemDecoration;
 import com.ctwl.lzq.howmuchanimation.Model.Bean.News;
 import com.ctwl.lzq.howmuchanimation.R;
 import com.ctwl.lzq.howmuchanimation.listener.OnScrollListener;
@@ -36,7 +31,7 @@ import butterknife.ButterKnife;
 /**
  * Created by B41-80 on 2016/6/28.
  */
-public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,NewsContract.View,OnScrollListener{
+public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,NewsContract.View,OnScrollListener,NewsRecyclerAdapter.OnNewsItemClikListener{
 
     @BindView(R.id.id_recyclerview)
     RecyclerView mRecyclerView;
@@ -105,6 +100,7 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         super.onActivityCreated(savedInstanceState);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         initRecyclerView();
+        mNewsRecyclerAdapter.setOnNewsItemClikListener(this);
     }
 
     @Override
@@ -169,5 +165,15 @@ public class NewsFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private String addPageNumber(){
         pageNumber++;
         return String.valueOf(pageNumber);
+    }
+
+    @Override
+    public void onClikShareButton(News news) {
+
+    }
+
+    @Override
+    public void onClikCollectionButton(News news) {
+        newsPresenter.upLoad(news);
     }
 }

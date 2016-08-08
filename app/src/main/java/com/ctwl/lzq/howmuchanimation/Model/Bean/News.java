@@ -1,6 +1,10 @@
 package com.ctwl.lzq.howmuchanimation.Model.Bean;
 
+import com.alibaba.fastjson.JSON;
+import com.avos.avoscloud.AVObject;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by B41-80 on 2016/6/28.
@@ -16,8 +20,9 @@ public class News {
     String title;
     int imagesNumber;
 
+
     public int getImagesNumber() {
-        return imageurls.size();
+            return imageurls.size();
     }
 
     public void setImagesNumber(int imagesNumber) {
