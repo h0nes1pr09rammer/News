@@ -176,7 +176,7 @@ public class JokeActivity extends AppCompatActivity {
      * 切换主题
      */
     private void showChagePage() {
-        startActivity(new Intent(JokeActivity.this, ChagePageActivity.class));
+        startActivity(new Intent(JokeActivity.this, SelecteImgActivity.class));
     }
 
     /**
