@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <ImageView
         android:id="@+id/add"
         android:layout_width="wrap_content"
@@ -15,5 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="添加更多感兴趣的内容"/>
+        android:text="添加更多感兴趣的内容"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"/>
 </RelativeLayout>

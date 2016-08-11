@@ -1,6 +1,8 @@
 package com.ctwl.lzq.howmuchanimation.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,12 +36,15 @@ public class SelecteImgAdapter extends BaseAdapter{
     boolean isFirstEnter = true;
     int mSelectCount;
     ArrayList<String> selectImgPath;
+    String type;
+    String mSelectImg;
 
-    public SelecteImgAdapter(RecyclerView recyclerView, final List<ImgInfo> mList, Context mContext) {
+    public SelecteImgAdapter(RecyclerView recyclerView, final List<ImgInfo> mList, Context mContext,String type) {
         selectImgPath = new ArrayList<>();
         this.mList = mList;
         this.mContext = mContext;
         this.recyclerView = recyclerView;
+        this.type = type;
 //        this.recyclerView.setOnScrollListener(new OnScrollListener() {
 //            @Override
 //            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -82,19 +87,28 @@ public class SelecteImgAdapter extends BaseAdapter{
         ((ImageViewHolder)holder).imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mList.get(position).isSelected()){
-                    if (mSelectCount>0){
-                        ((ImageViewHolder)holder).selecteImageView.setImageResource(R.mipmap.img_unselected);
-                        mList.get(position).setSelected(false);
-                        selectImgPath.remove(mList.get(position).getPath());
-                        mSelectCount--;
-                    }
+                if (type.equals("123")){
+                    mSelectImg = mList.get(position).getPath();
+                    Intent intent = new Intent();
+                    intent.putExtra("select_img",mSelectImg);
+                    Log.v("PersonInfoActivity",mSelectImg);
+                    ((Activity)mContext).setResult(2,intent);
+                    ((Activity)mContext).onBackPressed();
                 }else{
-                    if (mSelectCount<9){
-                        ((ImageViewHolder)holder).selecteImageView.setImageResource(R.mipmap.img_selected);
-                        mList.get(position).setSelected(true);
-                        selectImgPath.add(mList.get(position).getPath());
-                        mSelectCount++;
+                    if (mList.get(position).isSelected()){
+                        if (mSelectCount>0){
+                            ((ImageViewHolder)holder).selecteImageView.setImageResource(R.mipmap.img_unselected);
+                            mList.get(position).setSelected(false);
+                            selectImgPath.remove(mList.get(position).getPath());
+                            mSelectCount--;
+                        }
+                    }else{
+                        if (mSelectCount<9){
+                            ((ImageViewHolder)holder).selecteImageView.setImageResource(R.mipmap.img_selected);
+                            mList.get(position).setSelected(true);
+                            selectImgPath.add(mList.get(position).getPath());
+                            mSelectCount++;
+                        }
                     }
                 }
             }
@@ -120,5 +134,8 @@ public class SelecteImgAdapter extends BaseAdapter{
             selectImgPath = new ArrayList<>();
         }
         return selectImgPath;
+    }
+    public String getSelectImg(){
+        return mSelectImg;
     }
 }

@@ -1,6 +1,8 @@
 package com.ctwl.lzq.howmuchanimation.Activity;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,11 +16,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.ctwl.lzq.howmuchanimation.Callback.LeancloudSaveCallback;
 import com.ctwl.lzq.howmuchanimation.R;
+import com.ctwl.lzq.howmuchanimation.Utils.LeanCloudUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
 import com.ctwl.lzq.howmuchanimation.View.PersonDataFragment;
 import com.ctwl.lzq.howmuchanimation.View.PersonLogFragment;
@@ -41,6 +47,8 @@ public class PersonInfoActivity extends AppCompatActivity{
     TabLayout mTabLayout;
     @BindView(R.id.person_info_viewpager)
     ViewPager mViewPager;
+    @BindView(R.id.backdrop)
+    ImageView mBackgroundImageView;
 
     private PersonDataFragment mPersonDataFragment;
     private PersonLogFragment mPersonLogFragment;
@@ -68,6 +76,14 @@ public class PersonInfoActivity extends AppCompatActivity{
         mViewPager.setAdapter(new PersonerViewPagerAdapter(getSupportFragmentManager()));
         mTabLayout.setTabTextColors(getResources().getColor(R.color.whiteTrans80), getResources().getColor(R.color.orange));
         mTabLayout.setupWithViewPager(mViewPager);
+        mBackgroundImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PersonInfoActivity.this,SelecteImgActivity.class);
+                intent.putExtra("type","123");
+                startActivityForResult(intent,2);
+            }
+        });
     }
 
 
@@ -123,5 +139,28 @@ public class PersonInfoActivity extends AppCompatActivity{
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        Log.v("PersonInfoActivity",data.getStringExtra("select_img"));
+        mBackgroundImageView.setImageBitmap(BitmapFactory.decodeFile(data.getStringExtra("select_img")));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LeanCloudUtils.upDataUserHead(data.getStringExtra("select_img"), "_User", "head", new LeancloudSaveCallback() {
+                    @Override
+                    public void onSaveSuccess() {
+                        Log.v("PersonInfoActivity","success");
+                    }
+
+                    @Override
+                    public void onSaveFaile(String eor) {
+                        Log.v("PersonInfoActivity",eor);
+                    }
+                });
+            }
+        }).start();
     }
 }

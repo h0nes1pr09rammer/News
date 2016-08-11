@@ -35,16 +35,18 @@ public class SelecteImgActivity extends AppCompatActivity{
     RecyclerView mRecyclerView;
     SelecteImgAdapter mSelecteImgAdapter;
     Handler mHandler;
+    String type;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_img);
         ButterKnife.bind(this);
+        type = getIntent().getStringExtra("type");
         mImgList = new ArrayList<>();
         pathList = new ArrayList<>();
         mRecyclerView.setLayoutManager(new GridLayoutManager(this,4));
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(this));
-        mSelecteImgAdapter = new SelecteImgAdapter(mRecyclerView,mImgList,this);
+        mSelecteImgAdapter = new SelecteImgAdapter(mRecyclerView,mImgList,this,type);
         mRecyclerView.setAdapter(mSelecteImgAdapter);
         getImg();
         mHandler = new Handler(){
@@ -58,9 +60,16 @@ public class SelecteImgActivity extends AppCompatActivity{
                             mImgList.add(imgInfo);
                         }
                         mSelecteImgAdapter.notifyDataSetChanged();
-                        Intent intent = new Intent();
-                        intent.putStringArrayListExtra("select_img",mSelecteImgAdapter.getSelectImgPath());
-                        setResult(1,intent);
+                        if (type.equals("123")){
+//                            Log.v("",mSelecteImgAdapter.getSelectImg())
+//                            Intent intent = new Intent();
+//                            intent.putExtra("select_img",mSelecteImgAdapter.getSelectImg());
+//                            setResult(2,intent);
+                        }else{
+                            Intent intent = new Intent();
+                            intent.putStringArrayListExtra("select_img",mSelecteImgAdapter.getSelectImgPath());
+                            setResult(1,intent);
+                        }
                         break;
                 }
             }
@@ -73,7 +82,6 @@ public class SelecteImgActivity extends AppCompatActivity{
             public void run() {
                 Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 ContentResolver mContentResolver = getContentResolver();
-                //只查询jpeg和png的图片
                 Cursor mCursor = mContentResolver.query(mImageUri, null, null, null,null);
                 while (mCursor.moveToNext()){
                     String path = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.Media.DATA));

@@ -3,6 +3,7 @@ package com.ctwl.lzq.howmuchanimation.Activity;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.avos.avoscloud.AVUser;
 import com.ctwl.lzq.howmuchanimation.R;
 import com.ctwl.lzq.howmuchanimation.Utils.LeanCloudUtils;
+import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;
 import com.ctwl.lzq.howmuchanimation.View.CarePagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.CollectionPagerFragment;
 import com.ctwl.lzq.howmuchanimation.View.DiscoverPagerFragment;
@@ -91,6 +94,10 @@ public class JokeActivity extends AppCompatActivity {
 
     private void initView() {
         mImageView = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.head_img);
+//        mImageView.setImageBitmap(BitmapFactory.);
+//        if (AVUser.getCurrentUser().getAVFile("head").getUrl()!=null){
+//            VolleyUtils.getInstance().displayImageView(AVUser.getCurrentUser().getAVFile("head").getUrl(),mImageView);
+//        }
         mImageView.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -176,7 +183,9 @@ public class JokeActivity extends AppCompatActivity {
      * 切换主题
      */
     private void showChagePage() {
-        startActivity(new Intent(JokeActivity.this, SelecteImgActivity.class));
+        Intent intent = new Intent(JokeActivity.this, SelecteImgActivity.class);
+        intent.putExtra("type","111");
+        startActivity(intent);
     }
 
     /**

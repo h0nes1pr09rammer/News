@@ -1,10 +1,12 @@
 package com.ctwl.lzq.howmuchanimation.Utils;
 
 import android.content.Context;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
@@ -134,7 +136,7 @@ public class LeanCloudUtils {
         Iterator iter = map.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            todo.put(entry.getKey().toString(), entry.getValue().toString());
+            todo.put(entry.getKey().toString(), entry.getValue());
         }
         todo.saveInBackground(new SaveCallback() {
             @Override
@@ -179,5 +181,23 @@ public class LeanCloudUtils {
         news.setSource(avObject.getString("source"));
         news.setTitle(avObject.getString("title"));
         return news;
+    }
+    public static void upDataUserHead(String path,String tableName,String cloumName,final LeancloudSaveCallback mLeancloudSaveCallback){
+        AVFile avFile = new AVFile(Time.getCurrentTimezone(),BitmapUtils.Bitmap2Bytes(ImageLoaderUtils.getInstance().decodeSampledBitmapFromNative(path,100,100)));
+        // 第一参数是 className,第二个参数是 objectId
+        AVObject todo = AVObject.createWithoutData(tableName, AVUser.getCurrentUser().getObjectId());
+        // 修改 content
+        todo.put(cloumName,avFile);
+        // 保存到云端
+        todo.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                if (e==null){
+                    mLeancloudSaveCallback.onSaveSuccess();
+                }else{
+                    mLeancloudSaveCallback.onSaveFaile(e.toString());
+                }
+            }
+        });
     }
 }

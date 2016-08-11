@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        style="@style/ToolBarStyle"
+        >
+    </android.support.v7.widget.Toolbar>
+    <TextView
+        android:id="@+id/select_finish"
+        android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="完成"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:background="@color/orange"/>
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/toolbar"
+        android:layout_above="@id/select_finish"
         android:id="@+id/select_img_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
-</LinearLayout>
+
+</RelativeLayout>
