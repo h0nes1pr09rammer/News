@@ -23,13 +23,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVUser;
 import com.ctwl.lzq.howmuchanimation.Activity.SelecteImgActivity;
 import com.ctwl.lzq.howmuchanimation.Adapter.AddImageViewAdapter;
 import com.ctwl.lzq.howmuchanimation.Callback.LeancloudSaveCallback;
+import com.ctwl.lzq.howmuchanimation.Contract.SendContract;
 import com.ctwl.lzq.howmuchanimation.Diy.DividerGridItemDecoration;
+import com.ctwl.lzq.howmuchanimation.Presenter.SendMsgPresenter;
 import com.ctwl.lzq.howmuchanimation.R;
 import com.ctwl.lzq.howmuchanimation.Utils.BitmapUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.ImageLoaderUtils;
@@ -50,7 +53,7 @@ import pl.droidsonroids.gif.GifImageView;
 /**
  * Created by B41-80 on 2016/7/15.
  */
-public class ReleasePagerFragment extends Fragment implements View.OnClickListener{
+public class ReleasePagerFragment extends Fragment implements View.OnClickListener,SendContract.View{
 
     @BindView(R.id.add_img_rv)
     RecyclerView mRecyclerView;
@@ -64,24 +67,14 @@ public class ReleasePagerFragment extends Fragment implements View.OnClickListen
     EditText mContentEditView;
     @BindView(R.id.m_localtion_rl)
     RelativeLayout mLocationRelativeLayout;
+    @BindView(R.id.send_status)
+    TextView mSendStatusTextView;
 
     private View mView;
     List<String> mList;
     AddImageViewAdapter mAddImageViewAdapter;
     View footView;
-    boolean isFinish;
-    List<AVFile> mAvFiles;
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.v("ReleasePagerFragment",data.getStringArrayListExtra("select_img").get(0));
-        if (data.getStringArrayListExtra("select_img").size()!=0){
-            mList.addAll(data.getStringArrayListExtra("select_img"));
-            mAddImageViewAdapter.notifyDataSetChanged();
-        }
-    }
+    SendMsgPresenter mSendMsgPresenter;
 
     @Nullable
     @Override
@@ -91,7 +84,6 @@ public class ReleasePagerFragment extends Fragment implements View.OnClickListen
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((ScreenUtils.getScreenWidth(getActivity())-16)/4
                 ,(ScreenUtils.getScreenWidth(getActivity())-16)/4);
         footView.setLayoutParams(layoutParams);
-        footView.setOnClickListener(this);
         ButterKnife.bind(this,mView);
         return mView;
     }
@@ -99,20 +91,57 @@ public class ReleasePagerFragment extends Fragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mAvFiles = new ArrayList<>();
+        mSendMsgPresenter = new SendMsgPresenter(this);
         mFloatingActionButton.setOnClickListener(this);
         mLocationRelativeLayout.setOnClickListener(this);
+        footView.setOnClickListener(this);
         mList = new ArrayList<>();
         mAddImageViewAdapter = new AddImageViewAdapter(getActivity(),mList);
         mAddImageViewAdapter.setFootView(footView);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),4));
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(getActivity()));
         mRecyclerView.setAdapter(mAddImageViewAdapter);
-//        final MediaController mc = new MediaController(getActivity());
-//        mc.setMediaPlayer((GifDrawable)mGifImageView.getDrawable());
-//        mc.setAnchorView(mGifImageView);
-//        mc.show();
-//        ((GifDrawable) mGifImageView.getDrawable()).stop();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.m_localtion_rl:
+                break;
+            case R.id.send_fab:
+                animateRevealClose();
+                break;
+            default:
+                Intent intent = new Intent(getActivity(), SelecteImgActivity.class);
+                intent.putExtra("type","114");
+                startActivityForResult(intent,1);
+                break;
+        }
+    }
+
+    @Override
+    public void sendSuccess() {
+        mSendStatusTextView.setText("发送成功");
+        animateRevealShow();
+    }
+
+    @Override
+    public void showErrorMsg(String msg) {
+
+    }
+
+    @Override
+    public void setPresenter(SendContract.Presenter presenter) {
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.v("ReleasePagerFragment",data.getStringArrayListExtra("select_img").get(0));
+        if (data.getStringArrayListExtra("select_img").size()!=0){
+            mList.addAll(data.getStringArrayListExtra("select_img"));
+            mAddImageViewAdapter.notifyDataSetChanged();
+        }
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void animateRevealShow() {
@@ -143,9 +172,8 @@ public class ReleasePagerFragment extends Fragment implements View.OnClickListen
             @Override
             public void onAnimationEnd(Animator animation) {
                 mCardView.setVisibility(View.INVISIBLE);
+                mSendMsgPresenter.send(mContentEditView.getText().toString(),mList);
                 super.onAnimationEnd(animation);
-//                fab.setImageResource(R.drawable.plus);
-//                RegisterActivity.super.onBackPressed();
             }
 
             @Override
@@ -154,47 +182,5 @@ public class ReleasePagerFragment extends Fragment implements View.OnClickListen
             }
         });
         mAnimator.start();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.m_localtion_rl:
-                break;
-            case R.id.send_fab:
-                if (isFinish){
-                    animateRevealShow();
-                    isFinish = false;
-                }else{
-                    animateRevealClose();
-                    isFinish = true;
-                    for (String s:mList){
-                        AVFile avFile = new AVFile(""+System.currentTimeMillis(), BitmapUtils.Bitmap2Bytes(ImageLoaderUtils.getInstance().decodeSampledBitmapFromNative(s,100,100)));
-                        mAvFiles.add(avFile);
-                    }
-                    Map<String,Object> map = new HashMap<String, Object>();
-                    map.put("content",mContentEditView.getText().toString());
-                    map.put("name", AVUser.getCurrentUser().getString("name"));
-                    map.put("username", AVUser.getCurrentUser().getUsername());
-                    map.put("imgList", mAvFiles);
-                    LeanCloudUtils.saveInBackground("share", map, new LeancloudSaveCallback() {
-                        @Override
-                        public void onSaveSuccess() {
-
-                        }
-
-                        @Override
-                        public void onSaveFaile(String eor) {
-
-                        }
-                    });
-                }
-                break;
-            default:
-                Intent intent = new Intent(getActivity(), SelecteImgActivity.class);
-                intent.putExtra("type","114");
-                startActivityForResult(intent,1);
-                break;
-        }
     }
 }

@@ -128,6 +128,9 @@ public class LeanCloudUtils {
             return false;
         }
     }
+    public static AVUser getCurrentUser(){
+        return AVUser.getCurrentUser();
+    }
     public static void logOut(){
         AVUser.getCurrentUser().logOut();
     }
@@ -173,7 +176,6 @@ public class LeanCloudUtils {
         news.setChannelId(avObject.getString("channelId"));
         news.setChannelName(avObject.getString("channelName"));
         news.setDesc(avObject.getString("desc"));
-//        Log.v("toNews",JSON.parseObject(avObject.getString("imagesUrls")).toString());
         news.setImageurls(JSON.parseArray(avObject.getString("imagesUrls"),ImageUrls.class));
         news.setImagesNumber(Integer.valueOf(avObject.getString("imagesNumber")));
         news.setLink(avObject.getString("link"));
