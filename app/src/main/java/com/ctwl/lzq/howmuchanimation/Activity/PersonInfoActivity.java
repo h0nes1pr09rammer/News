@@ -144,7 +144,7 @@ public class PersonInfoActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        Log.v("PersonInfoActivity",data.getStringExtra("select_img"));
+        Log.v("PersonInfoActivity",data.getStringExtra("select_img"));
         mBackgroundImageView.setImageBitmap(BitmapFactory.decodeFile(data.getStringExtra("select_img")));
         new Thread(new Runnable() {
             @Override

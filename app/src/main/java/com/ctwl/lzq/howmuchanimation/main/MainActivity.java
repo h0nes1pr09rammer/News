@@ -25,6 +25,7 @@ import com.ctwl.lzq.howmuchanimation.Presenter.MainPresenter;
 import com.ctwl.lzq.howmuchanimation.Presenter.NewsPresenter;
 import com.ctwl.lzq.howmuchanimation.R;
 import com.ctwl.lzq.howmuchanimation.Utils.LogUtils;
+import com.ctwl.lzq.howmuchanimation.Utils.UpdataUtils;
 import com.ctwl.lzq.howmuchanimation.View.NewsFragment;
 
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        UpdataUtils.loadLib();
         getWindow().setEnterTransition(new Slide());
         getWindow().setExitTransition(new Slide());
         initPresenter();

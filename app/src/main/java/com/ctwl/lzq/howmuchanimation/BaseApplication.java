@@ -6,6 +6,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.ctwl.lzq.howmuchanimation.Utils.CommonUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.LeanCloudUtils;
+import com.ctwl.lzq.howmuchanimation.Utils.UpdataUtils;
 import com.ctwl.lzq.howmuchanimation.Utils.VolleyUtils;
 
 /**
