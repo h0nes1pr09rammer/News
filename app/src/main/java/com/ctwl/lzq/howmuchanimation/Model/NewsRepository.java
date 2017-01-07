@@ -39,7 +39,7 @@ public class NewsRepository implements NewsDataSource{
         newsTypeList = new ArrayList<NewsType>();
         newsList = new ArrayList<News>();
         map = new HashMap<String,String>();
-        map.put("apikey", BaseApi.MY_APPKEY);
+//        map.put("apikey", BaseApi.MY_APPKEY);
     }
 
     @Override
@@ -87,6 +87,7 @@ public class NewsRepository implements NewsDataSource{
                 jsonCallBack.onFaile(404,"刷新失败");
             }
             private void toJson(String t) {
+                Log.i("lzq","toJson(NewsRepository.java:90)"+t.toString());
                 JSONObject jsonObject = JSON.parseObject(t);
                 jsonObject = JSON.parseObject(jsonObject.getString("showapi_res_body"));
                 List<NewsType> newsTypes = JSON.parseArray(jsonObject.getString("channelList"),NewsType.class);
@@ -137,9 +138,9 @@ public class NewsRepository implements NewsDataSource{
     public void getNewsFromNet(final String channelId,String pageNumber, final JsonCallBack jsonCallBack) {
         String httpUrl;
         if (channelId.equals(ALL_NEWS_SIGN)){
-            httpUrl = BaseApi.NEWS_CONENT_API +"?"+"page="+pageNumber;
+            httpUrl = BaseApi.NEWS_CONENT_API +"&"+"page="+pageNumber;
         }else{
-            httpUrl = BaseApi.NEWS_CONENT_API +"?" + "channelId=" + channelId+"&page="+pageNumber;
+            httpUrl = BaseApi.NEWS_CONENT_API +"&" + "channelId=" + channelId+"&page="+pageNumber;
         }
         Log.i("getNewsFromNet",httpUrl);
         VolleyUtils.getInstance().postString(httpUrl, map, null, new HttpCallBack() {

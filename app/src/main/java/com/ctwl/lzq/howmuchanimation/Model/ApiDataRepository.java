@@ -47,23 +47,23 @@ public class ApiDataRepository implements DialogueDataSource {
 
     @Override
     public void loadingData(final JsonCallBack jsonCallBack) {
-        HashMap<String,String> map = new HashMap<String,String>();
-        map.put("apikey",BaseApi.MY_APPKEY);
-        VolleyUtils.getInstance().postString(BaseApi.ZY_API, map,null, new HttpCallBack() {
-            @Override
-            public void onSuccess(Object o) {
-                JSONObject jsonObject = JSON.parseObject(o.toString());
-                taici = jsonObject.getString("taici");
-                show = jsonObject.getString("show");
-                source = jsonObject.getString("source");
-                jsonCallBack.onSuccess();
-            }
-
-            @Override
-            public void onFaile() {
-
-            }
-        });
+//        HashMap<String,String> map = new HashMap<String,String>();
+//        map.put("apikey",BaseApi.MY_APPKEY);
+//        VolleyUtils.getInstance().postString(BaseApi.ZY_API, map,null, new HttpCallBack() {
+//            @Override
+//            public void onSuccess(Object o) {
+//                JSONObject jsonObject = JSON.parseObject(o.toString());
+//                taici = jsonObject.getString("taici");
+//                show = jsonObject.getString("show");
+//                source = jsonObject.getString("source");
+//                jsonCallBack.onSuccess();
+//            }
+//
+//            @Override
+//            public void onFaile() {
+//
+//            }
+//        });
     }
 
     @Override
